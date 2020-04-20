@@ -36,7 +36,9 @@ class MovingIndicatorMixin:
 
     def macd(self, n=12, m=26, k=9):
         df_macd = self._df.loc[:, MOVING_COLS]
-        df_macd.loc[:, "diff"] = self._ema(col="close", n=n) - self._ema(col="close", n=m)
+        df_macd.loc[:, "diff"] = self._ema(col="close", n=n) - self._ema(
+            col="close", n=m
+        )
         df_macd.loc[:, "dea"] = self._ema(col="diff", n=k, df=df_macd)
         df_macd.loc[:, "macd"] = 2 * (df_macd["diff"] - df_macd["dea"])
         return df_macd

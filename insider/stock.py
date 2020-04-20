@@ -10,7 +10,8 @@ from constants import (
     DAY_COL,
     NUMERIC_COLUMNS,
     MA_COLORS,
-    MA_COLS)
+    MA_COLS,
+)
 
 
 class Stock:
@@ -46,18 +47,20 @@ class Stock:
         except Timeout:
             raise ValueError("The request timed out. Please try again.")
         else:
-            data = r.json()['record']
+            data = r.json()["record"]
             if data:
                 df = pd.DataFrame(data, columns=DAY_COL + NUMERIC_COLUMNS)
                 df[NUMERIC_COLUMNS] = (
                     df[NUMERIC_COLUMNS]
-                        .applymap(lambda x: x.replace(",", ""))
-                        .astype("float64")
+                    .applymap(lambda x: x.replace(",", ""))
+                    .astype("float64")
                 )
                 self._df = df
                 return df
             else:
-                raise ValueError("No data about the stock is found. Please check if the stock code is correct.")
+                raise ValueError(
+                    "No data about the stock is found. Please check if the stock code is correct."
+                )
 
     @staticmethod
     def _choose_date(df, start_date, end_date):
@@ -77,14 +80,15 @@ class Stock:
             df = df.tail(head)
 
         stock_data = go.Candlestick(
-            x=df['day'],
-            open=df['open'],
-            high=df['high'],
-            low=df['low'],
-            close=df['close'],
-            increasing_line_color='red',
-            decreasing_line_color='green',
-            name="stock price")
+            x=df["day"],
+            open=df["open"],
+            high=df["high"],
+            low=df["low"],
+            close=df["close"],
+            increasing_line_color="red",
+            decreasing_line_color="green",
+            name="stock price",
+        )
         return stock_data
 
     @staticmethod
@@ -94,16 +98,14 @@ class Stock:
 
         ma_data = []
         for col, color in zip(MA_COLS, MA_COLORS):
-            data = go.Scatter(x=df['day'], y=df[col], name=col, marker_color=color)
+            data = go.Scatter(x=df["day"], y=df[col], name=col, marker_color=color)
             ma_data.append(data)
 
         return ma_data
 
     @staticmethod
     def _set_layout():
-        layout = go.Layout(
-            xaxis=dict(type='category', tickangle=270)
-        )
+        layout = go.Layout(xaxis=dict(type="category", tickangle=270))
         return layout
 
     def plot(self, head=90, start_date=None, end_date=None, verbose=True):
@@ -118,5 +120,7 @@ class Stock:
 
         layout = self._set_layout()
         fig = go.Figure(data=data, layout=layout)
-        fig.update_layout(xaxis_rangeslider_visible=False, title_text="Stock Price Chart")
+        fig.update_layout(
+            xaxis_rangeslider_visible=False, title_text="Stock Price Chart"
+        )
         fig.show()
