@@ -31,7 +31,7 @@ class Stock:
 
     def _check_ktype(self, ktype):
         upper_ktype = ktype.upper()
-        if upper_ktype not in ["D", "W", "M"]:
+        if upper_ktype not in KTYPES:
             raise ValueError(f"Invalid ktype is given, valid inputs are {KTYPES}")
         converted_ktype = KTYPE_CONVERSION[upper_ktype]
         return upper_ktype, converted_ktype
