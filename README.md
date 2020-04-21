@@ -1,5 +1,19 @@
 # StockInsider
 
+
+<p align="left">
+    <a href="https://badge.fury.io/py/StockInsider">
+        <img src="https://badge.fury.io/py/StockInsider.svg" alt="Package Version">
+    </a>
+    <a href="https://github.com/charlesdong1991/py-roughviz/pulls">
+        <img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat" alt="Contributions welcome">
+    </a>
+    <a href="https://opensource.org/licenses/MIT">
+        <img src="https://img.shields.io/badge/License-MIT-brightgreen.svg" alt="License">
+    </a>
+</p>
+
+
 This is a Python tool to collect Chinese stock price information, 
 calculate the trading indicators for analysis and visualize stock
 price and indicator lines.
