@@ -1,1 +1,1 @@
-from stock_insider import StockInsider
+from insider.stock_insider import StockInsider

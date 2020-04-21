@@ -41,8 +41,8 @@ which refers to daily stock price, and other allowed values are `W`
 (weekly) and `M` (monthly).
 
 ```python
-from insider.stock import Stock
-si = Stock("sz002516")
+from insider import StockInsider
+si = StockInsider("sz002516")
 ```
 
 ### Stock Price Visualization
