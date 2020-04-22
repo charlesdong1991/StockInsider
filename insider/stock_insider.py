@@ -3,25 +3,26 @@ from typing import Callable, List, Optional
 import plotly.graph_objects as go
 import pandas as pd
 
-from insider.mixins import MovingIndicatorMixin
+from insider.mixins import MovingIndicatorMixin, KDJIndicatorMixin
 from insider.stock import Stock
 from insider.constants import MA_N, MD_N, EXPMA_N
 
 
-class StockInsider(Stock, MovingIndicatorMixin):
+class StockInsider(Stock, MovingIndicatorMixin, KDJIndicatorMixin):
     """Plot daily trading indicators."""
 
-    def __init__(self, code):
+    def __init__(self, code, ktype="D"):
         """
         code: Full stock code，(e.g. 'sz002156')，股票完整代码
+        ktype: Data frequency, valid input is `D`, `W`, or `M`. 股票数据的频率
         """
-        super().__init__(code)
+        super().__init__(code, ktype)
 
     @staticmethod
-    def _plot_line(df: pd.DataFrame, head: int, line_name: str):
+    def _plot_line(df: pd.DataFrame, head: int, line_name: str, y: str = "close"):
         if head:
             df = df.tail(head)
-        plot_data = go.Scatter(x=df["day"], y=df["close"], name=line_name)
+        plot_data = go.Scatter(x=df["day"], y=df[y], name=line_name)
         return plot_data
 
     def _plot_moving_lines(
@@ -151,5 +152,29 @@ class StockInsider(Stock, MovingIndicatorMixin):
                 x=df_macd["day"], y=df_macd["diff"], marker_color="black", name="DIFF"
             )
         )
+        fig.update_layout(title_text=f"MACD Chart ({self.stock_code})")
+        fig.show()
+
+    def plot_kdj(self, head: int = 90, n: int = 9, smooth_type="sma"):
+        """Plot KDJ Indicator. 绘出KDJ曲线。
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+            n: The size of moving average period for K, default is 9. 平移平均曲线的窗口大小，默认
+            是9个交易日。
+            smooth_type: The metric to calculate moving average, default is `sma`, the other
+            option is `ema`. 选择计算平移平均曲线的方式，默认是SMA, 另一个选择是EMA。
+        """
+        df_kdj = self.kdj(n=n, smooth_type=smooth_type)
+        if head:
+            df_kdj = df_kdj.tail(head)
+
+        plot_data = []
+        for col in ["K", "D", "J"]:
+            plot_data.append(self._plot_line(df_kdj, head, col, y=col))
+
+        layout = self._set_layout()
+        fig = go.Figure(data=plot_data, layout=layout)
         fig.update_layout(title_text=f"MACD Chart ({self.stock_code})")
         fig.show()

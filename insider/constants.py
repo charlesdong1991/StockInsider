@@ -29,6 +29,7 @@ NUMERIC_COLUMNS = [
 
 # Constants used in Mixins
 MOVING_COLS = ["day", "close"]  # cols used for Moving indicator mixin
+KDJ_COLS = ["day", "close", "high", "low"]  # cols used for KDJ indicator mixin
 
 # Constants used in StockInsider class
 MA_N = [5, 10, 20, 60]  # Number of days counted for MA indicator

@@ -1,4 +1,4 @@
-from insider.constants import MOVING_COLS
+from insider.constants import MOVING_COLS, KDJ_COLS
 
 
 class BaseMixin:
@@ -18,6 +18,14 @@ class BaseMixin:
         if df is None:
             df = self._df
         return df[col].ewm(ignore_na=False, span=n, min_periods=0, adjust=False).mean()
+
+    def _sma(self, col, n, df=None):
+        assert n != 0, "Cannot set n to 0 for SMA."
+
+        if df is None:
+            df = self._df
+        ser = df[col].fillna(0)
+        return ser.ewm(min_periods=0, ignore_na=False, adjust=False, alpha=1/n).mean()
 
 
 class MovingIndicatorMixin(BaseMixin):
@@ -50,3 +58,27 @@ class MovingIndicatorMixin(BaseMixin):
         df_macd.loc[:, "dea"] = self._ema(col="diff", n=k, df=df_macd)
         df_macd.loc[:, "macd"] = 2 * (df_macd["diff"] - df_macd["dea"])
         return df_macd
+
+
+class KDJIndicatorMixin(BaseMixin):
+    """KDJ Indicator Mixin (KDJ指标混合)"""
+
+    def kdj(self, n=9, smooth_type="sma"):
+        if smooth_type == "sma":
+            func = self._sma
+        elif smooth_type == "ema":
+            func = self._ema
+        else:
+            raise ValueError("Invalid smooth average method is given, only sma and ema are allowed.")
+
+        df_kdj = self._df.loc[:, KDJ_COLS]
+        close_minus_low = df_kdj.close - df_kdj["low"].rolling(n).min()
+        high_minus_low = df_kdj["high"].rolling(n).max() - df_kdj["low"].rolling(n).min()
+        df_kdj.loc[:, "K"] = (close_minus_low / high_minus_low) * 100
+        df_kdj.loc[:, "K"] = func("K", 3, df=df_kdj)
+        df_kdj.loc[:, "D"] = func("K", 3, df=df_kdj)
+        df_kdj.loc[:, "J"] = 3 * df_kdj["K"] - 2 * df_kdj["D"]
+
+        # Cap it between 0 and 100 as shown in THS.
+        df_kdj.loc[:, ["K", "D", "J"]] = df_kdj.loc[:, ["K", "D", "J"]].clip(0, 100)
+        return df_kdj
