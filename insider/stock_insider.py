@@ -3,12 +3,12 @@ from typing import Callable, List, Optional
 import plotly.graph_objects as go
 import pandas as pd
 
-from insider.mixins import MovingIndicatorMixin, KDJIndicatorMixin
+from insider.mixins import MovingIndicatorMixin, KDJIndicatorMixin, RSIIndicatorMixin
 from insider.stock import Stock
-from insider.constants import MA_N, MD_N, EXPMA_N
+from insider.constants import MA_N, MD_N, EXPMA_N, RSI_N
 
 
-class StockInsider(Stock, MovingIndicatorMixin, KDJIndicatorMixin):
+class StockInsider(Stock, MovingIndicatorMixin, KDJIndicatorMixin, RSIIndicatorMixin):
     """Plot daily trading indicators."""
 
     def __init__(self, code, ktype="D"):
@@ -29,6 +29,7 @@ class StockInsider(Stock, MovingIndicatorMixin, KDJIndicatorMixin):
         self,
         func: Callable,
         name: str,
+        y: str = "close",
         head: int = 90,
         ns: Optional[List] = None,
         verbose: bool = False,
@@ -38,7 +39,7 @@ class StockInsider(Stock, MovingIndicatorMixin, KDJIndicatorMixin):
         for n in ns:
             df = func(n=n)
             line_name = name + str(n)
-            plot_data.append(self._plot_line(df, head, line_name))
+            plot_data.append(self._plot_line(df, head, line_name, y=y))
 
         if verbose:
             df = self._df.copy()
@@ -178,3 +179,37 @@ class StockInsider(Stock, MovingIndicatorMixin, KDJIndicatorMixin):
         fig = go.Figure(data=plot_data, layout=layout)
         fig.update_layout(title_text=f"MACD Chart ({self.stock_code})")
         fig.show()
+
+    def plot_rsi(self, head: int = 90, ns: Optional[List] = None):
+        """Plot RSI Indicator. 绘出RSI曲线。
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+            ns: Select which trading lines to plot, default is to plot 6, 12, 24-day lines
+            选择曲线的种类，e.g. [6, 12], 默认会绘出6, 12, 24日曲线
+        """
+        if ns is None:
+            ns = RSI_N
+
+        func = self.rsi
+        self._plot_moving_lines(
+            func=func, y="rsi", name="RSI", head=head, ns=ns, verbose=False
+        )
+
+    def plot_vrsi(self, head: int = 90, ns: Optional[List] = None):
+        """Plot VRSI Indicator. 绘出VRSI曲线。
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+            ns: Select which trading lines to plot, default is to plot 6, 12, 24-day lines
+            选择曲线的种类，e.g. [6, 12], 默认会绘出6, 12, 24日曲线
+        """
+        if ns is None:
+            ns = RSI_N
+
+        func = self.vrsi
+        self._plot_moving_lines(
+            func=func, y="rsi", name="VRSI", head=head, ns=ns, verbose=False
+        )

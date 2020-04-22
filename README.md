@@ -153,3 +153,12 @@ si.plot_kdj(head=90, smooth_type="sma", n=7)
 ```
 
 ![Example 5](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example5.png)
+
+- Example6
+
+```python
+si = StockInsider("sh603019")
+si.plot_rsi(head=80, ns=[6, 12])
+```
+
+![Example 6](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example6.png)

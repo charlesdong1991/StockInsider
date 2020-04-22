@@ -1,4 +1,4 @@
-from insider.constants import MOVING_COLS, KDJ_COLS
+from insider.constants import MOVING_COLS, KDJ_COLS, RSI_COLS
 
 
 class BaseMixin:
@@ -25,7 +25,7 @@ class BaseMixin:
         if df is None:
             df = self._df
         ser = df[col].fillna(0)
-        return ser.ewm(min_periods=0, ignore_na=False, adjust=False, alpha=1/n).mean()
+        return ser.ewm(min_periods=0, ignore_na=False, adjust=False, alpha=1 / n).mean()
 
 
 class MovingIndicatorMixin(BaseMixin):
@@ -63,17 +63,22 @@ class MovingIndicatorMixin(BaseMixin):
 class KDJIndicatorMixin(BaseMixin):
     """KDJ Indicator Mixin (KDJ指标混合)"""
 
-    def kdj(self, n=9, smooth_type="sma"):
+    def kdj(self, n: int = 9, smooth_type: str = "sma"):
         if smooth_type == "sma":
             func = self._sma
         elif smooth_type == "ema":
             func = self._ema
         else:
-            raise ValueError("Invalid smooth average method is given, only sma and ema are allowed.")
+            raise ValueError(
+                "Invalid smooth average method is given, only sma and ema are allowed."
+            )
 
         df_kdj = self._df.loc[:, KDJ_COLS]
         close_minus_low = df_kdj["close"] - df_kdj["low"].rolling(n).min()
-        high_minus_low = df_kdj["high"].rolling(n).max() - df_kdj["low"].rolling(n).min()
+        high_minus_low = (
+            df_kdj["high"].rolling(n).max() - df_kdj["low"].rolling(n).min()
+        )
+
         df_kdj.loc[:, "K"] = (close_minus_low / high_minus_low) * 100
         df_kdj.loc[:, "K"] = func("K", 3, df=df_kdj)
         df_kdj.loc[:, "D"] = func("K", 3, df=df_kdj)
@@ -82,3 +87,27 @@ class KDJIndicatorMixin(BaseMixin):
         # Cap it between 0 and 100 as shown in THS.
         df_kdj.loc[:, ["K", "D", "J"]] = df_kdj.loc[:, ["K", "D", "J"]].clip(0, 100)
         return df_kdj
+
+
+class RSIIndicatorMixin(BaseMixin):
+    """RSI and VRSI Indicator Mixin (RSI和VRSI指标混合)"""
+
+    def _rsi(self, col: str, n: int = 6):
+        df_rsi = self._df.loc[:, RSI_COLS]
+        ser_shift_diff = df_rsi[col] - df_rsi[col].shift(1)
+
+        df_rsi["shift_diff"] = ser_shift_diff.clip(lower=0)
+        df_rsi["shift_diff_abs"] = ser_shift_diff.abs()
+        df_rsi["rsi"] = (
+            self._sma("shift_diff", n=n, df=df_rsi)
+            / self._sma("shift_diff_abs", n=n, df=df_rsi)
+            * 100
+        )
+
+        return df_rsi
+
+    def rsi(self, n: int = 6):
+        return self._rsi("close", n=n)
+
+    def vrsi(self, n: int = 6):
+        return self._rsi("volumn", n=n)
