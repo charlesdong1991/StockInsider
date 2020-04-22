@@ -144,3 +144,12 @@ si.plot_macd()
 
 ![Example 4](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example4.png)
 
+
+- Example5
+
+```python
+si = StockInsider("sh603019")
+si.plot_kdj(head=90, smooth_type="sma", n=7)
+```
+
+![Example 5](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example5.png)

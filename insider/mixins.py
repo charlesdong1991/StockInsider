@@ -72,7 +72,7 @@ class KDJIndicatorMixin(BaseMixin):
             raise ValueError("Invalid smooth average method is given, only sma and ema are allowed.")
 
         df_kdj = self._df.loc[:, KDJ_COLS]
-        close_minus_low = df_kdj.close - df_kdj["low"].rolling(n).min()
+        close_minus_low = df_kdj["close"] - df_kdj["low"].rolling(n).min()
         high_minus_low = df_kdj["high"].rolling(n).max() - df_kdj["low"].rolling(n).min()
         df_kdj.loc[:, "K"] = (close_minus_low / high_minus_low) * 100
         df_kdj.loc[:, "K"] = func("K", 3, df=df_kdj)
