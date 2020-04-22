@@ -108,7 +108,7 @@ If you would love to play with the data and do some other more fancy stuff,
 you could also use the tool as a scrapper. Simply use `si.show_data()`
 could return the data in Pandas DataFrame.
 
-### Gallery
+## Gallery
 
 - Example1
 
