@@ -3,12 +3,12 @@ from typing import Callable, List, Optional
 import plotly.graph_objects as go
 import pandas as pd
 
-from insider.mixins import BaseMixin, MovingIndicatorMixin
+from insider.mixins import MovingIndicatorMixin
 from insider.stock import Stock
 from insider.constants import MA_N, MD_N, EXPMA_N
 
 
-class StockInsider(Stock, BaseMixin, MovingIndicatorMixin):
+class StockInsider(Stock, MovingIndicatorMixin):
     """Plot daily trading indicators."""
 
     def __init__(self, code):

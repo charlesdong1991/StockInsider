@@ -20,7 +20,7 @@ class BaseMixin:
         return df[col].ewm(ignore_na=False, span=n, min_periods=0, adjust=False).mean()
 
 
-class MovingIndicatorMixin:
+class MovingIndicatorMixin(BaseMixin):
     """Moving Indicator Mixin (移动指标混合)"""
 
     def ma(self, n=5):
