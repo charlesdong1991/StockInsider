@@ -177,7 +177,7 @@ class StockInsider(Stock, MovingIndicatorMixin, KDJIndicatorMixin, RSIIndicatorM
 
         layout = self._set_layout()
         fig = go.Figure(data=plot_data, layout=layout)
-        fig.update_layout(title_text=f"MACD Chart ({self.stock_code})")
+        fig.update_layout(title_text=f"KDJ Chart ({self.stock_code})")
         fig.show()
 
     def plot_rsi(self, head: int = 90, ns: Optional[List] = None):

@@ -81,12 +81,15 @@ can set `verbose` to `False`.
 
 ### Stock Trading Indicator Visualization
 
-There are many commonly used indicators supported in this tool:
+Currently, there are many commonly used indicators supported in this tool:
 
 - MA (Moving Average): `si.plot_ma()`
 - MD (Moving Deviation): `si.plot_md()`
 - EMA (Exponential Moving Average): `si.plot_ema()`
 - MACD (Moving Average Convergence/Divergence): `si.plot_macd()`
+- KDJ: `si.plot_kdj`
+- RSI (Relative Strength Index): `si.plot_rsi()`
+- VRSI (Volumn Relative Strength Index): `si.plot_vrsi()`
 
 And there are several options to tune with:
 
@@ -95,6 +98,8 @@ And there are several options to tune with:
 plot via setting `head`.
 - Choose which indicators are included in the plot, e.g. only plot `5-day`
 and `60-day` line of MA indicator by setting `ns` to `[5, 60]`.
+
+And some other more for specific indicators, please check out the docstrings.
 
 
 ### Get the stock data in Pandas DataFrame
