@@ -90,6 +90,10 @@ Currently, there are many commonly used indicators supported in this tool:
 - KDJ: `si.plot_kdj`
 - RSI (Relative Strength Index): `si.plot_rsi()`
 - VRSI (Volumn Relative Strength Index): `si.plot_vrsi()`
+- Volumn change: `si.plot_volumn()`
+- VMA (Volumn Moving Average): `si.plot_vma()`
+- VSTD: `si.plot_vstd()`
+- VMACD (Volumn Moving Average Convergence/Divergence): `si.plot_vmacd()`
 
 And there are several options to tune with:
 
@@ -167,3 +171,23 @@ si.plot_rsi(head=80, ns=[6, 12])
 ```
 
 ![Example 6](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example6.png)
+
+
+- Example7
+
+```python
+si = StockInsider("sh603019")
+si.plot_vma(verbose=True)
+```
+
+![Example 7](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example7.png)
+
+
+- Example8
+
+```python
+si = StockInsider("sh603019")
+si.plot_vmacd(head=60)
+```
+
+![Example 8](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example8.png)
