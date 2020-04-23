@@ -2,13 +2,25 @@ from typing import Callable, List, Optional
 
 import plotly.graph_objects as go
 import pandas as pd
+import numpy as np
 
-from insider.mixins import MovingIndicatorMixin, KDJIndicatorMixin, RSIIndicatorMixin
+from insider.mixins import (
+    MovingIndicatorMixin,
+    KDJIndicatorMixin,
+    RSIIndicatorMixin,
+    VolumnIndicatorMixin,
+)
 from insider.stock import Stock
 from insider.constants import MA_N, MD_N, EXPMA_N, RSI_N
 
 
-class StockInsider(Stock, MovingIndicatorMixin, KDJIndicatorMixin, RSIIndicatorMixin):
+class StockInsider(
+    Stock,
+    MovingIndicatorMixin,
+    KDJIndicatorMixin,
+    RSIIndicatorMixin,
+    VolumnIndicatorMixin,
+):
     """Plot daily trading indicators."""
 
     def __init__(self, code, ktype="D"):
@@ -28,6 +40,7 @@ class StockInsider(Stock, MovingIndicatorMixin, KDJIndicatorMixin, RSIIndicatorM
     def _plot_moving_lines(
         self,
         func: Callable,
+        verbose_func: Callable,
         name: str,
         y: str = "close",
         head: int = 90,
@@ -43,8 +56,8 @@ class StockInsider(Stock, MovingIndicatorMixin, KDJIndicatorMixin, RSIIndicatorM
 
         if verbose:
             df = self._df.copy()
-            stock_data = self._plot_stock_data(df, head)
-            plot_data.append(stock_data)
+            verbose_data = verbose_func(df, head)
+            plot_data.append(verbose_data)
 
         layout = self._set_layout()
         fig = go.Figure(data=plot_data, layout=layout)
@@ -70,7 +83,15 @@ class StockInsider(Stock, MovingIndicatorMixin, KDJIndicatorMixin, RSIIndicatorM
             ns = MA_N
 
         func = self.ma
-        self._plot_moving_lines(func=func, name="ma", head=head, ns=ns, verbose=verbose)
+        verbose_func = self._plot_stock_data
+        self._plot_moving_lines(
+            func=func,
+            verbose_func=verbose_func,
+            name="ma",
+            head=head,
+            ns=ns,
+            verbose=verbose,
+        )
 
     def plot_md(
         self, head: int = 90, ns: Optional[List[int]] = None, verbose: bool = False
@@ -89,7 +110,15 @@ class StockInsider(Stock, MovingIndicatorMixin, KDJIndicatorMixin, RSIIndicatorM
             ns = MD_N
 
         func = self.md
-        self._plot_moving_lines(func=func, name="md", head=head, ns=ns, verbose=verbose)
+        verbose_func = self._plot_stock_data
+        self._plot_moving_lines(
+            func=func,
+            verbose_func=verbose_func,
+            name="md",
+            head=head,
+            ns=ns,
+            verbose=verbose,
+        )
 
     def plot_ema(
         self, head: int = 90, ns: Optional[List[int]] = None, verbose: bool = False
@@ -108,8 +137,14 @@ class StockInsider(Stock, MovingIndicatorMixin, KDJIndicatorMixin, RSIIndicatorM
             ns = EXPMA_N
 
         func = self.ema
+        verbose_func = self._plot_stock_data
         self._plot_moving_lines(
-            func=func, name="ema", head=head, ns=ns, verbose=verbose
+            func=func,
+            verbose_func=verbose_func,
+            name="ema",
+            head=head,
+            ns=ns,
+            verbose=verbose,
         )
 
     def plot_macd(self, head: int = 90):
@@ -193,8 +228,15 @@ class StockInsider(Stock, MovingIndicatorMixin, KDJIndicatorMixin, RSIIndicatorM
             ns = RSI_N
 
         func = self.rsi
+        verbose_func = self._plot_stock_data
         self._plot_moving_lines(
-            func=func, y="rsi", name="RSI", head=head, ns=ns, verbose=False
+            func=func,
+            verbose_func=verbose_func,
+            y="rsi",
+            name="RSI",
+            head=head,
+            ns=ns,
+            verbose=False,
         )
 
     def plot_vrsi(self, head: int = 90, ns: Optional[List] = None):
@@ -210,6 +252,143 @@ class StockInsider(Stock, MovingIndicatorMixin, KDJIndicatorMixin, RSIIndicatorM
             ns = RSI_N
 
         func = self.vrsi
+        verbose_func = self._plot_stock_data
         self._plot_moving_lines(
-            func=func, y="rsi", name="VRSI", head=head, ns=ns, verbose=False
+            func=func,
+            verbose_func=verbose_func,
+            y="rsi",
+            name="VRSI",
+            head=head,
+            ns=ns,
+            verbose=False,
+        )
+
+    @staticmethod
+    def _plot_volumn_data(df, head):
+        df_volumn = df.copy()
+        if head:
+            df_volumn = df_volumn.tail(head)
+
+        df_volumn = df_volumn.assign(
+            color=lambda x: np.where(x["open"] < x["close"], "red", "green")
+        )
+
+        data = go.Bar(
+            x=df_volumn["day"],
+            y=df_volumn["volumn"],
+            base=0,
+            marker_color=df_volumn["color"],
+            name="Volumn",
+        )
+        return data
+
+    def plot_volumn(self, head: int = 90):
+        """Plot Volumn over time. 绘出交易量能柱状图。
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的交易量能柱状图。
+        """
+        df_volumn = self._df.copy()
+        data = self._plot_volumn_data(df_volumn, head)
+
+        layout = self._set_layout()
+        fig = go.Figure(data=[data], layout=layout)
+        fig.update_layout(title_text=f"Volumn Chart ({self.stock_code})")
+        fig.show()
+
+    def plot_vma(
+        self, head: int = 90, ns: Optional[List] = None, verbose: bool = False
+    ):
+        """Plot VMA over time. 绘出交易能量MA图曲线
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+            ns: Select which trading lines to plot, default is to plot 5, 10, 20-day lines
+            选择曲线的种类，e.g. [5, 10], 默认会绘出5, 10, 20日曲线
+            verbose: If to include volumn change bar chart or not, default is False.
+            选择是否将能量变化柱状图一起绘出，默认是False，将会只绘出指标曲线。
+        """
+        if ns is None:
+            ns = MA_N
+
+        func = self.vma
+        verbose_func = self._plot_volumn_data
+        self._plot_moving_lines(
+            func=func,
+            verbose_func=verbose_func,
+            y="volumn",
+            name="vma",
+            head=head,
+            ns=ns,
+            verbose=verbose,
+        )
+
+    def plot_vmacd(self, head: int = 90):
+        """Plot VMACD Indicator. 绘出VMACD曲线
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+
+        A mixed chart will be plotted, including a bar chart to visualize VMACD, and line charts
+        to visualize DIFF and DEA.
+        将会绘出量能差值柱形图来表示VMACD, 以及表示差离值和讯号线的线性图。
+        """
+        df_vmacd = self.vmacd()
+        if head:
+            df_vmacd = df_vmacd.tail(head)
+
+        df_vmacd.loc[:, "color"] = df_vmacd["macd"].apply(
+            lambda x: "red" if x >= 0 else "green"
+        )
+
+        layout = self._set_layout()
+        fig = go.Figure(layout=layout)
+
+        fig.add_trace(
+            go.Bar(
+                x=df_vmacd["day"],
+                y=df_vmacd["macd"],
+                base=0,
+                marker_color=df_vmacd["color"],
+                name="VMACD",
+            )
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=df_vmacd["day"], y=df_vmacd["dea"], marker_color="orange", name="DEA"
+            )
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=df_vmacd["day"], y=df_vmacd["diff"], marker_color="black", name="DIFF"
+            )
+        )
+        fig.update_layout(title_text=f"VMACD Chart ({self.stock_code})")
+        fig.show()
+
+    def plot_vstd(self, head: int = 90, ns: Optional[List] = None):
+        """Plot VSTD chart. 绘出VSTD曲线
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+            ns: Select which trading lines to plot, default is to plot 5, 10, 20-day lines
+            选择曲线的种类，e.g. [5, 10], 默认会绘出5, 10, 20日曲线
+        """
+        if ns is None:
+            ns = MD_N
+
+        func = self.vstd
+        verbose_func = self._plot_volumn_data
+        self._plot_moving_lines(
+            func=func,
+            verbose_func=verbose_func,
+            y="vstd",
+            name="vstd",
+            head=head,
+            ns=ns,
+            verbose=False,
         )

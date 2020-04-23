@@ -28,7 +28,8 @@ NUMERIC_COLUMNS = [
 ]  # all numeric columns from fetched dataset
 
 # Constants used in Mixins
-MOVING_COLS = ["day", "close"]  # cols used for Moving indicator mixin
+MOVING_COLS = ["day", "close"]  # cols used for Moving indicator mixin for `close`
+MOVING_VOLUMN_COLS = ["day", "volumn"]  # cols used for Moving indicator mixin for `volumn`
 KDJ_COLS = ["day", "close", "high", "low"]  # cols used for KDJ indicator mixin
 RSI_COLS = ["day", "close", "volumn"]  # cols used for RSI/VRSI indicator mixin
 
