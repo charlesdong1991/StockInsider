@@ -94,6 +94,9 @@ Currently, there are many commonly used indicators supported in this tool:
 - VMA (Volumn Moving Average): `si.plot_vma()`
 - VSTD: `si.plot_vstd()`
 - VMACD (Volumn Moving Average Convergence/Divergence): `si.plot_vmacd()`
+- ENV: `si.plot_env()`
+- VOSC: (Volumn Oscillator): `si.plot_vosc()`
+
 
 And there are several options to tune with:
 
@@ -111,6 +114,13 @@ And some other more for specific indicators, please check out the docstrings.
 If you would love to play with the data and do some other more fancy stuff,
 you could also use the tool as a scrapper. Simply use `si.show_data()`
 could return the data in Pandas DataFrame.
+
+
+### Get the calculated indicator data in Pandas DataFrame
+
+If you do not like the plot, and want to do other fancy analysis or visualization,
+it is certainly okay! And you just need to call the indicator name, e.g. `si.vosc()`, 
+or `si.macd()`, then it will return the subset with those indicators in it.
 
 ## Gallery
 
@@ -191,3 +201,14 @@ si.plot_vmacd(head=60)
 ```
 
 ![Example 8](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example8.png)
+
+
+- Example9
+
+```python
+si = StockInsider("sh603019")
+si.plot_env(verbose=True, head=60)
+```
+
+![Example 9](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example9.png)
+
