@@ -4,22 +4,14 @@ import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 
-from insider.mixins import (
-    MovingIndicatorMixin,
-    KDJIndicatorMixin,
-    RSIIndicatorMixin,
-    VolumnIndicatorMixin,
-)
+from insider.mixins.price import PriceIndicatorMixin
+from insider.mixins.volume import VolumnIndicatorMixin
 from insider.stock import Stock
 from insider.constants import MA_N, MD_N, EXPMA_N, RSI_N
 
 
 class StockInsider(
-    Stock,
-    MovingIndicatorMixin,
-    KDJIndicatorMixin,
-    RSIIndicatorMixin,
-    VolumnIndicatorMixin,
+    Stock, PriceIndicatorMixin, VolumnIndicatorMixin,
 ):
     """Plot daily trading indicators."""
 
