@@ -410,5 +410,26 @@ class StockInsider(
 
         if verbose:
             fig.add_trace(self._plot_stock_data(self._df, head))
-        fig.update_layout(title_text=f"ENV Chart ({self.stock_code})", xaxis_rangeslider_visible=False)
+        fig.update_layout(
+            title_text=f"ENV Chart ({self.stock_code})", xaxis_rangeslider_visible=False
+        )
+        fig.show()
+
+    def plot_vosc(self, head: int = 90):
+        """Plot Volumn Oscillator Indicator 绘出成交量震荡指标
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+        """
+        df_vosc = self.vosc()
+        if head:
+            df_vosc = df_vosc.tail(head)
+
+        layout = self._set_layout()
+        fig = go.Figure(
+            layout=layout,
+            data=go.Scatter(x=df_vosc["day"], y=df_vosc["vosc"], name="VOSC"),
+        )
+        fig.update_layout(title_text=f"VOSC Chart ({self.stock_code})")
         fig.show()
