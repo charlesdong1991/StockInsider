@@ -433,3 +433,22 @@ class StockInsider(
         )
         fig.update_layout(title_text=f"VOSC Chart ({self.stock_code})")
         fig.show()
+
+    def plot_mi(self, head: int = 90, n: int = 12):
+        """Plot Momentum Indicator. 绘出动量指标
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+            n: The size of moving average period for K, default is 12. 平移平均曲线的窗口大小，默认
+            是12个交易日。
+        """
+        df_mi = self.mi(n=n)
+
+        if head:
+            df_mi = df_mi.tail(head)
+
+        layout = self._set_layout()
+        fig = go.Figure(layout=layout, data=go.Scatter(x=df_mi["day"], y=df_mi["mi"]))
+        fig.update_layout(title_text=f"MI Chart ({self.stock_code})")
+        fig.show()

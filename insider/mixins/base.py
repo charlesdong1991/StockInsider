@@ -1,3 +1,7 @@
+from typing import Union
+
+import pandas as pd
+
 from insider.constants import RSI_COLS
 
 
@@ -19,12 +23,24 @@ class BaseMixin:
             df = self._df
         return df[col].ewm(ignore_na=False, span=n, min_periods=0, adjust=False).mean()
 
-    def _sma(self, col, n, df=None):
+    def _sma(self, n, col=None, df=None, use_ser: Union[bool, pd.Series] = False):
+        """Calculate SMA indicator
+
+        if use_ser is assigned with a pandas.Series, then will use it to calculate
+        SMA and ignore other given data, default is False which will use the default
+        dataset.
+        """
         assert n != 0, "Cannot set n to 0 for SMA."
 
         if df is None:
             df = self._df
-        ser = df[col].fillna(0)
+
+        if isinstance(use_ser, pd.Series):
+            ser = use_ser.fillna(0)
+        elif use_ser is False:
+            ser = df[col].fillna(0)
+        else:
+            raise ValueError("Only False or a Series is allowed for user_ser.")
         return ser.ewm(min_periods=0, ignore_na=False, adjust=False, alpha=1 / n).mean()
 
     def _rsi(self, col: str, n: int = 6):

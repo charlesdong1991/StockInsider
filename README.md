@@ -95,7 +95,8 @@ Currently, there are many commonly used indicators supported in this tool:
 - VSTD: `si.plot_vstd()`
 - VMACD (Volumn Moving Average Convergence/Divergence): `si.plot_vmacd()`
 - ENV: `si.plot_env()`
-- VOSC: (Volumn Oscillator): `si.plot_vosc()`
+- VOSC (Volumn Oscillator): `si.plot_vosc()`
+- MI (Momentum Indicator): `si.plot_mi()`
 
 
 And there are several options to tune with:

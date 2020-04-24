@@ -50,8 +50,8 @@ class PriceIndicatorMixin(BaseMixin):
         )
 
         df_kdj.loc[:, "K"] = (close_minus_low / high_minus_low) * 100
-        df_kdj.loc[:, "K"] = func("K", 3, df=df_kdj)
-        df_kdj.loc[:, "D"] = func("K", 3, df=df_kdj)
+        df_kdj.loc[:, "K"] = func(col="K", n=3, df=df_kdj)
+        df_kdj.loc[:, "D"] = func(col="K", n=3, df=df_kdj)
         df_kdj.loc[:, "J"] = 3 * df_kdj["K"] - 2 * df_kdj["D"]
 
         # Cap it between 0 and 100 as shown in THS.
@@ -67,3 +67,11 @@ class PriceIndicatorMixin(BaseMixin):
         df_env.loc[:, "up"] = self._ma(col="close", n=n) * 1.06
         df_env.loc[:, "down"] = self._ma(col="close", n=n) * 0.94
         return df_env
+
+    def mi(self, n=12):
+        """Calculate MI indicator."""
+        df_mi = self._df.loc[:, MOVING_COLS]
+
+        ser = df_mi["close"] - df_mi["close"].shift(n)
+        df_mi.loc[:, "mi"] = self._sma(n=n, use_ser=ser)
+        return df_mi
