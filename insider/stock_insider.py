@@ -384,3 +384,31 @@ class StockInsider(
             ns=ns,
             verbose=False,
         )
+
+    def plot_env(self, head: int = 90, n: int = 14, verbose: bool = True):
+        """Plot ENV indicator. 绘出ENV曲线。
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+            n: The size of moving average period for K, default is 14. 平移平均曲线的窗口大小，默认
+            是14个交易日。
+            verbose: If to include stock price or not, default is False.
+            选择是否将股票价格曲线一起绘出，默认是False，将会只绘出指标曲线。
+        """
+
+        df_env = self.env(n=n)
+
+        if head:
+            df_env = df_env.tail(head)
+
+        layout = self._set_layout()
+        fig = go.Figure(layout=layout)
+
+        fig.add_trace(go.Scatter(x=df_env["day"], y=df_env["up"], name="UP"))
+        fig.add_trace(go.Scatter(x=df_env["day"], y=df_env["down"], name="DOWN"))
+
+        if verbose:
+            fig.add_trace(self._plot_stock_data(self._df, head))
+        fig.update_layout(title_text=f"ENV Chart ({self.stock_code})", xaxis_rangeslider_visible=False)
+        fig.show()

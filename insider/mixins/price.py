@@ -60,3 +60,10 @@ class PriceIndicatorMixin(BaseMixin):
 
     def rsi(self, n: int = 6):
         return self._rsi("close", n=n)
+
+    def env(self, n: int = 14):
+        df_env = self._df.loc[:, MOVING_COLS]
+
+        df_env.loc[:, "up"] = self._ma(col="close", n=n) * 1.06
+        df_env.loc[:, "down"] = self._ma(col="close", n=n) * 0.94
+        return df_env
