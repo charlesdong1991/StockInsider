@@ -399,14 +399,11 @@ class StockInsider(
 
         df_env = self.env(n=n)
 
-        if head:
-            df_env = df_env.tail(head)
-
         layout = self._set_layout()
         fig = go.Figure(layout=layout)
 
-        fig.add_trace(go.Scatter(x=df_env["day"], y=df_env["up"], name="UP"))
-        fig.add_trace(go.Scatter(x=df_env["day"], y=df_env["down"], name="DOWN"))
+        fig.add_trace(self._plot_line(df_env, head=head, y="up", line_name="UP"))
+        fig.add_trace(self._plot_line(df_env, head=head, y="down", line_name="DOWN"))
 
         if verbose:
             fig.add_trace(self._plot_stock_data(self._df, head))
@@ -423,13 +420,11 @@ class StockInsider(
             默认90，将会绘出最近90个交易日的曲线。
         """
         df_vosc = self.vosc()
-        if head:
-            df_vosc = df_vosc.tail(head)
 
         layout = self._set_layout()
         fig = go.Figure(
             layout=layout,
-            data=go.Scatter(x=df_vosc["day"], y=df_vosc["vosc"], name="VOSC"),
+            data=self._plot_line(df_vosc, head=head, y="vosc", line_name="VOSC"),
         )
         fig.update_layout(title_text=f"VOSC Chart ({self.stock_code})")
         fig.show()
@@ -445,11 +440,11 @@ class StockInsider(
         """
         df_mi = self.mi(n=n)
 
-        if head:
-            df_mi = df_mi.tail(head)
-
         layout = self._set_layout()
-        fig = go.Figure(layout=layout, data=go.Scatter(x=df_mi["day"], y=df_mi["mi"]))
+        fig = go.Figure(
+            layout=layout,
+            data=self._plot_line(df_mi, head=head, y="mi", line_name="MI"),
+        )
         fig.update_layout(title_text=f"MI Chart ({self.stock_code})")
         fig.show()
 
@@ -490,14 +485,12 @@ class StockInsider(
                 )
 
         df_mike = self.mike(n=n)
-        if head:
-            df_mike = df_mike.tail(head)
 
         layout = self._set_layout()
         fig = go.Figure(layout=layout)
 
         for n in ns:
-            fig.add_trace(go.Scatter(x=df_mike["day"], y=df_mike[n], name=n.upper()))
+            fig.add_trace(self._plot_line(df_mike, head=head, y=n, line_name=n.upper()))
 
         if verbose:
             fig.add_trace(self._plot_stock_data(self._df, head))
