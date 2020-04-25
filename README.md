@@ -29,6 +29,11 @@ You can choose to either download it from PyPI through:
 pip install StockInsider
 ```
 
+or to install the latest version:
+```bash
+pip install -U git+https://github.com/charlesdong1991/StockInsider
+```
+
 or fork and clone the repo to your local device, and install 
 the dependencies through:
 
