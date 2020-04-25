@@ -40,6 +40,8 @@ class Stock:
             raise ValueError("Stock code needs to be either sz or sh.")
         elif len(code) != 8:
             raise ValueError(f"Invalid code length: requires 8, but get {len(code)}")
+        elif not code[2: ].isdigit():
+            raise ValueError("Code must be all digits after sh or sz.")
         return code
 
     def _check_ktype(self, ktype: str) -> (str, str):
