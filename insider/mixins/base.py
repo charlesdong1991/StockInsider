@@ -50,8 +50,8 @@ class BaseMixin:
         df_rsi["shift_diff"] = ser_shift_diff.clip(lower=0)
         df_rsi["shift_diff_abs"] = ser_shift_diff.abs()
         df_rsi["rsi"] = (
-            self._sma("shift_diff", n=n, df=df_rsi)
-            / self._sma("shift_diff_abs", n=n, df=df_rsi)
+            self._sma(col="shift_diff", n=n, df=df_rsi)
+            / self._sma(col="shift_diff_abs", n=n, df=df_rsi)
             * 100
         )
 
