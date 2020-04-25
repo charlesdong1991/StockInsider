@@ -7,7 +7,7 @@ import numpy as np
 from insider.mixins.price import PriceIndicatorMixin
 from insider.mixins.volume import VolumnIndicatorMixin
 from insider.stock import Stock
-from insider.constants import MA_N, MD_N, EXPMA_N, RSI_N
+from insider.constants import MA_N, MD_N, EXPMA_N, RSI_N, MIKE_COLS
 
 
 class StockInsider(
@@ -385,7 +385,7 @@ class StockInsider(
             verbose=False,
         )
 
-    def plot_env(self, head: int = 90, n: int = 14, verbose: bool = True):
+    def plot_env(self, head: int = 90, n: int = 14, verbose: bool = False):
         """Plot ENV indicator. 绘出ENV曲线。
 
         Parameters:
@@ -451,4 +451,59 @@ class StockInsider(
         layout = self._set_layout()
         fig = go.Figure(layout=layout, data=go.Scatter(x=df_mi["day"], y=df_mi["mi"]))
         fig.update_layout(title_text=f"MI Chart ({self.stock_code})")
+        fig.show()
+
+    def plot_mike(
+        self,
+        head: int = 90,
+        n: int = 12,
+        ns: Optional[List] = None,
+        verbose: bool = False,
+    ):
+        """Plot Mike Indicator. 绘出Mike指标
+
+        压力线解释：
+        初级压力线（WR)
+        中级压力线（MR)
+        强力压力线（SR）
+        初级支撑线（WS）
+        中级支撑线（MS）
+        强力支撑线（SS）
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+            n: The size of moving average period for K, default is 12. 平移平均曲线的窗口大小，默认
+            是12个交易日。
+            ns: Choose the lines to be plotted, default is None, which will plot all six lines.
+            选择压力线来绘出，默认会绘出所有六条压力线。
+            verbose: If to include stock price or not, default is False.
+            选择是否将股票价格曲线一起绘出，默认是False，将会只绘出指标曲线。
+        """
+        if ns is None:
+            ns = MIKE_COLS
+        else:
+            ns = [n.lower() for n in ns]
+            if [n for n in ns if n not in MIKE_COLS]:
+                raise ValueError(
+                    "Invalid input for ns, valid values are wr, sr, ws, ms and ss."
+                )
+
+        df_mike = self.mike(n=n)
+        if head:
+            df_mike = df_mike.tail(head)
+
+        layout = self._set_layout()
+        fig = go.Figure(layout=layout)
+
+        for n in ns:
+            fig.add_trace(go.Scatter(x=df_mike["day"], y=df_mike[n], name=n.upper()))
+
+        if verbose:
+            fig.add_trace(self._plot_stock_data(self._df, head))
+
+        fig.update_layout(
+            title_text=f"MIKE Chart ({self.stock_code})",
+            xaxis_rangeslider_visible=False,
+        )
         fig.show()

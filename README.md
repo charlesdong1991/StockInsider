@@ -102,6 +102,7 @@ Currently, there are many commonly used indicators supported in this tool:
 - ENV: `si.plot_env()`
 - VOSC (Volumn Oscillator): `si.plot_vosc()`
 - MI (Momentum Indicator): `si.plot_mi()`
+- MIKE: `si.plot_mike()`
 
 
 And there are several options to tune with:
@@ -217,4 +218,13 @@ si.plot_env(verbose=True, head=60)
 ```
 
 ![Example 9](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example9.png)
+
+- Example10
+
+```python
+si = StockInsider("sh603019")
+si.plot_mike(head=60, ns=["ws", "wr"], verbose=True)
+```
+
+![Example 10](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example10.png)
 
