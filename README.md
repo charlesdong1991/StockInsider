@@ -102,6 +102,7 @@ Currently, there are many commonly used indicators supported in this tool:
 - ENV: `si.plot_env()`
 - VOSC (Volumn Oscillator): `si.plot_vosc()`
 - MI (Momentum Indicator): `si.plot_mi()`
+- MIKE: `si.plot_mike()`
 
 
 And there are several options to tune with:
