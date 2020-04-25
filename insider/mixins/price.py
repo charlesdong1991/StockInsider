@@ -1,5 +1,5 @@
 from insider.mixins.base import BaseMixin
-from insider.constants import MOVING_COLS, KDJ_COLS
+from insider.constants import MOVING_COLS, HIGH_LOW_COLS
 
 
 class PriceIndicatorMixin(BaseMixin):
@@ -43,7 +43,7 @@ class PriceIndicatorMixin(BaseMixin):
                 "Invalid smooth average method is given, only sma and ema are allowed."
             )
 
-        df_kdj = self._df.loc[:, KDJ_COLS]
+        df_kdj = self._df.loc[:, HIGH_LOW_COLS]
         close_minus_low = df_kdj["close"] - df_kdj["low"].rolling(n).min()
         high_minus_low = (
             df_kdj["high"].rolling(n).max() - df_kdj["low"].rolling(n).min()
@@ -75,3 +75,23 @@ class PriceIndicatorMixin(BaseMixin):
         ser = df_mi["close"] - df_mi["close"].shift(n)
         df_mi.loc[:, "mi"] = self._sma(n=n, use_ser=ser)
         return df_mi
+
+    def mike(self, n: int = 12):
+        """Calculate MIKE indicator"""
+        df_mike = self._df.loc[:, HIGH_LOW_COLS]
+
+        # typ price = avg(high + low + close)
+        typ = df_mike[["high", "low", "close"]].mean(axis=1)
+        # hv price = highest price in a window
+        hv = df_mike["high"].rolling(n).max()
+        # lv price = lowest price in a window
+        lv = df_mike["low"].rolling(n).min()
+
+        df_mike.loc[:, "wr"] = typ * 2 - lv
+        df_mike.loc[:, "mr"] = typ + hv - lv
+        df_mike.loc[:, "sr"] = 2 * hv - lv
+        df_mike.loc[:, "ws"] = typ * 2 - hv
+        df_mike.loc[:, "ms"] = typ - hv + lv
+        df_mike.loc[:, "ss"] = 2 * lv - hv
+
+        return df_mike
