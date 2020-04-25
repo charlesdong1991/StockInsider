@@ -475,6 +475,8 @@ class StockInsider(
             默认90，将会绘出最近90个交易日的曲线。
             n: The size of moving average period for K, default is 12. 平移平均曲线的窗口大小，默认
             是12个交易日。
+            ns: Choose the lines to be plotted, default is None, which will plot all six lines.
+            选择压力线来绘出，默认会绘出所有六条压力线。
             verbose: If to include stock price or not, default is False.
             选择是否将股票价格曲线一起绘出，默认是False，将会只绘出指标曲线。
         """
