@@ -12,7 +12,7 @@ setup(
     description="The Python implementation of an stock analysis and visualization tool.",
     long_description_content_type='text/markdown',
     long_description=long_description,
-    version="0.0.6",
+    version="0.0.7",
     author="Kaiqi Dong",
     url="https://github.com/charlesdong1991/StockInsider",
     author_email="kaiqidong1991@gmail.com",
