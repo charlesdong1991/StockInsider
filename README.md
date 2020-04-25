@@ -11,6 +11,9 @@
     <a href="https://opensource.org/licenses/MIT">
         <img src="https://img.shields.io/badge/License-MIT-brightgreen.svg" alt="License">
     </a>
+    <a href="https://badge.fury.io/py/py-roughviz">
+        <img src="https://travis-ci.org/charlesdong1991/py-roughviz.svg?branch=master" alt="build">
+    </a>
 </p>
 
 
