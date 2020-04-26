@@ -242,3 +242,10 @@ si.plot_adtm(head=120)
 ```
 
 ![Example 11](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example11.png)
+
+
+## Donation (打赏)
+It takes time and efforts to make the tool, and if you like it, you could
+also support the author by donation via Wechat Pay :)
+
+![Donation](https://github.com/charlesdong1991/StockInsider/blob/master/examples/donation.png)
