@@ -248,4 +248,4 @@ si.plot_adtm(head=120)
 It takes time and efforts to make the tool, and if you like it, you could
 also support the author by donation via Wechat Pay :)
 
-<img src="https://github.com/charlesdong1991/StockInsider/blob/master/examples/donation.png" height="144" weight="144">
+<img src="https://github.com/charlesdong1991/StockInsider/blob/master/examples/donation.png" height="240" weight="240">
