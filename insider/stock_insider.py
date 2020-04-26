@@ -519,3 +519,19 @@ class StockInsider(
 
         fig.update_layout(title_text=f"ADTM Chart ({self.stock_code})")
         fig.show()
+
+    def plot_obv(self, head: int = 90):
+        """Plot OBV (On Balance Volumn) Indicator。绘出能量指标
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+        """
+        df_obv = self.obv()
+
+        layout = self._set_layout()
+        fig = go.Figure(layout=layout)
+        fig.add_trace(self._plot_line(df_obv, head=head, y="obv", line_name="OBV"))
+
+        fig.update_layout(title_text=f"OBV Chart ({self.stock_code})")
+        fig.show()
