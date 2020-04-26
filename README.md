@@ -106,6 +106,7 @@ Currently, there are many commonly used indicators supported in this tool:
 - VOSC (Volumn Oscillator): `si.plot_vosc()`
 - MI (Momentum Indicator): `si.plot_mi()`
 - MIKE: `si.plot_mike()`
+- ADTM: `si.plot_adtm()`
 
 
 And there are several options to tune with:
@@ -231,3 +232,12 @@ si.plot_mike(head=60, ns=["ws", "wr"], verbose=True)
 
 ![Example 10](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example10.png)
 
+
+- Example11
+
+```python
+si = StockInsider("sh603019")
+si.plot_mike(head=120)
+```
+
+![Example 11](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example11.png)

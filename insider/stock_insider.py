@@ -500,3 +500,22 @@ class StockInsider(
             xaxis_rangeslider_visible=False,
         )
         fig.show()
+
+    def plot_adtm(self, head: int = 90):
+        """Plot ADTM(23,8) indicator. 绘出动态买卖气指标 (ADTM(23, 8))
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+        """
+        df_adtm = self.adtm()
+
+        layout = self._set_layout()
+        fig = go.Figure(layout=layout)
+        fig.add_trace(self._plot_line(df_adtm, head=head, y="adtm", line_name="ADTM"))
+        fig.add_trace(
+            self._plot_line(df_adtm, head=head, y="adtmma", line_name="ADTMMA")
+        )
+
+        fig.update_layout(title_text=f"ADTM Chart ({self.stock_code})")
+        fig.show()
