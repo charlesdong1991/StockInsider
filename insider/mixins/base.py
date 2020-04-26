@@ -2,7 +2,7 @@ from typing import Union
 
 import pandas as pd
 
-from insider.constants import RSI_COLS
+from insider.constants import VOLUMN_VOLS
 
 
 class BaseMixin:
@@ -44,7 +44,7 @@ class BaseMixin:
         return ser.ewm(min_periods=0, ignore_na=False, adjust=False, alpha=1 / n).mean()
 
     def _rsi(self, col: str, n: int = 6):
-        df_rsi = self._df.loc[:, RSI_COLS]
+        df_rsi = self._df.loc[:, VOLUMN_VOLS]
         ser_shift_diff = df_rsi[col] - df_rsi[col].shift(1)
 
         df_rsi["shift_diff"] = ser_shift_diff.clip(lower=0)

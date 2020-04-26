@@ -31,7 +31,7 @@ NUMERIC_COLUMNS = [
 MOVING_COLS = ["day", "close"]  # cols used for Moving indicator mixin for `close`
 MOVING_VOLUMN_COLS = ["day", "volumn"]  # cols used for Moving indicator mixin for `volumn`
 HIGH_LOW_COLS = ["day", "close", "high", "low"]  # cols used for KDJ indicator mixin
-RSI_COLS = ["day", "close", "volumn"]  # cols used for RSI/VRSI indicator mixin
+VOLUMN_VOLS = ["day", "close", "volumn"]  # cols used for RSI & VRSI & OBV indicator mixin
 ADTM_COLS = ["day", "open", "close", "high", "low"]  # cols used for ADTM indicator mixin
 
 # Constants used in StockInsider class

@@ -1,5 +1,7 @@
+import numpy as np
+
 from insider.mixins.base import BaseMixin
-from insider.constants import MOVING_VOLUMN_COLS
+from insider.constants import MOVING_VOLUMN_COLS, VOLUMN_VOLS
 
 
 class VolumnIndicatorMixin(BaseMixin):
@@ -39,3 +41,27 @@ class VolumnIndicatorMixin(BaseMixin):
             * 100
         )
         return df_vosc
+
+    def obv(self):
+        """On Balance Volumn Indicator (平衡能量指标)
+
+        规则：
+        若当日收盘价＞上日收盘价，则当日OBV=前一日OBV＋今日成交量
+        若当日收盘价＜上日收盘价，则当日OBV=前一日OBV－今日成交量
+        若当日收盘价＝上日收盘价，则当日OBV=前一日OBV
+        """
+        df_obv = self._df.loc[:, VOLUMN_VOLS]
+
+        df_obv.loc[:, "close_diff"] = df_obv["close"] - df_obv["close"].shift()
+        df_obv = df_obv.assign(
+            v=lambda x: np.select(
+                condlist=[
+                    x["close_diff"] > 0,
+                    x["close_diff"] < 0,
+                    x["close_diff"] == 0,
+                ],
+                choicelist=[x["volumn"], -x["volumn"], 0],
+            )
+        )
+        df_obv.loc[:, "obv"] = df_obv["v"].expanding(1).sum()
+        return df_obv

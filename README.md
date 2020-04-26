@@ -107,6 +107,7 @@ Currently, there are many commonly used indicators supported in this tool:
 - MI (Momentum Indicator): `si.plot_mi()`
 - MIKE: `si.plot_mike()`
 - ADTM: `si.plot_adtm()`
+- OBV (On Balance Volumn): `si.plot_obv()`
 
 
 And there are several options to tune with:
