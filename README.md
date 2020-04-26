@@ -237,7 +237,7 @@ si.plot_mike(head=60, ns=["ws", "wr"], verbose=True)
 
 ```python
 si = StockInsider("sh603019")
-si.plot_mike(head=120)
+si.plot_adtm(head=120)
 ```
 
 ![Example 11](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example11.png)
