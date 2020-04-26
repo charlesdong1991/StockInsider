@@ -32,10 +32,11 @@ MOVING_COLS = ["day", "close"]  # cols used for Moving indicator mixin for `clos
 MOVING_VOLUMN_COLS = ["day", "volumn"]  # cols used for Moving indicator mixin for `volumn`
 HIGH_LOW_COLS = ["day", "close", "high", "low"]  # cols used for KDJ indicator mixin
 RSI_COLS = ["day", "close", "volumn"]  # cols used for RSI/VRSI indicator mixin
+ADTM_COLS = ["day", "open", "close", "high", "low"]  # cols used for ADTM indicator mixin
 
 # Constants used in StockInsider class
 MA_N = [5, 10, 20, 60]  # Number of days counted for MA indicator
 MD_N = [5, 10, 20]  # Number of days counted for MD indicator
 EXPMA_N = [5, 10, 20, 60]  # Number of days counted for EMA indicator
 RSI_N = [6, 12, 24]  # Number of days counted for RSI/VRSI indicator
-MIKE_COLS = ["wr", "mr", "sr", "ws", "ms", "ss"]
+MIKE_COLS = ["wr", "mr", "sr", "ws", "ms", "ss"]  # Columns defined in MIKE indicator
