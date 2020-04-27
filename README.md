@@ -109,6 +109,8 @@ Currently, there are many commonly used indicators supported in this tool:
 - ADTM: `si.plot_adtm()`
 - OBV (On Balance Volumn): `si.plot_obv()`
 - RC (Price rate of Change): `si.plot_rc()`
+- BOLL (BOLL line): `si.plot_boll()`
+- BBIBOLL (BBI BOLL line): `si.plot_bbiboll()`
 
 
 And there are several options to tune with:
