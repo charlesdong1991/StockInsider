@@ -535,3 +535,21 @@ class StockInsider(
 
         fig.update_layout(title_text=f"OBV Chart ({self.stock_code})")
         fig.show()
+
+    def plot_rc(self, head: int = 90, n: int = 30):
+        """Plot RC (Price rate of Change) Indicator 绘出价格变化率指标
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+            n: The size of moving average period for K, default is 30. 平移平均曲线的窗口大小，默认
+            是30个交易日。
+        """
+        df_rc = self.rc(n=n)
+
+        layout = self._set_layout()
+        fig = go.Figure(layout=layout)
+        fig.add_trace(self._plot_line(df_rc, head=head, y="arc", line_name="ARC"))
+
+        fig.update_layout(title_text=f"RC Chart ({self.stock_code})")
+        fig.show()

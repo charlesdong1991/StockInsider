@@ -160,3 +160,11 @@ class PriceIndicatorMixin(BaseMixin):
 
         df_adtm.loc[:, "adtmma"] = self._ma(col="adtm", n=m, df=df_adtm)
         return df_adtm
+
+    def rc(self, n: int = 30):
+        """Calculate RC (Price rate of Change) indicator。 计算价格变化率"""
+        df_rc = self._df.loc[:, MOVING_COLS]
+        df_rc.loc[:, "rc"] = df_rc["close"] / df_rc["close"].shift(n)
+        df_rc.loc[:, "arc"] = self._sma(use_ser=df_rc["rc"].shift(1), n=n)
+
+        return df_rc
