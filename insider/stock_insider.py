@@ -140,7 +140,7 @@ class StockInsider(
         )
 
     def plot_macd(self, head: int = 90):
-        """Plot MACD Indicator. 绘出MACD曲线
+        """Plot MACD (Moving Average Convergence and Divergence) Indicator. 绘出MACD曲线
 
         Parameters:
             head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
@@ -208,7 +208,7 @@ class StockInsider(
         fig.show()
 
     def plot_rsi(self, head: int = 90, ns: Optional[List] = None):
-        """Plot RSI Indicator. 绘出RSI曲线。
+        """Plot RSI (Relative Strength Index) Indicator. 绘出RSI曲线。
 
         Parameters:
             head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
@@ -232,7 +232,7 @@ class StockInsider(
         )
 
     def plot_vrsi(self, head: int = 90, ns: Optional[List] = None):
-        """Plot VRSI Indicator. 绘出VRSI曲线。
+        """Plot VRSI (Volumn Relative Strength Index) Indicator. 绘出VRSI曲线。
 
         Parameters:
             head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
@@ -318,7 +318,8 @@ class StockInsider(
         )
 
     def plot_vmacd(self, head: int = 90):
-        """Plot VMACD Indicator. 绘出VMACD曲线
+        """Plot VMACD (Volumn Moving Average Convergence and Divergence)
+        Indicator. 绘出VMACD曲线
 
         Parameters:
             head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
@@ -455,7 +456,7 @@ class StockInsider(
         ns: Optional[List] = None,
         verbose: bool = False,
     ):
-        """Plot Mike Indicator. 绘出Mike指标
+        """Plot Mike Base Indicator. 绘出Mike指标
 
         压力线解释：
         初级压力线（WR)

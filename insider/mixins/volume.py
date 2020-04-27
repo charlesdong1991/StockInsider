@@ -32,7 +32,13 @@ class VolumnIndicatorMixin(BaseMixin):
         return self._rsi("volumn", n=n)
 
     def vosc(self, n=12, m=26):
-        """Volume Oscillator Indicator (成交量震荡指标)"""
+        """Volume Oscillator Indicator (成交量震荡指标)
+
+        规则
+        SHORT = N周期中成交量的总和/N；
+        LONG = M周期中成交量的总和/M；
+        VOSC =（SHORT－LONG）÷SHORT×100
+        """
 
         df_vosc = self._df.loc[:, MOVING_VOLUMN_COLS]
         df_vosc.loc[:, "vosc"] = (

@@ -26,7 +26,13 @@ class PriceIndicatorMixin(BaseMixin):
         return df_ema
 
     def macd(self, n=12, m=26, k=9):
-        """Moving Average Convergence Divergence Calculation (平滑异同移动平均计算)"""
+        """Moving Average Convergence Divergence Calculation (平滑异同移动平均计算)
+
+        规则
+        DIF = EMA12 - EMA26
+        DEA = DIF的9日加权移动平均
+        MACD = 2 ×（DIF-DEA）
+        """
         df_macd = self._df.loc[:, MOVING_COLS]
         df_macd.loc[:, "diff"] = self._ema(col="close", n=n) - self._ema(
             col="close", n=m
@@ -36,6 +42,15 @@ class PriceIndicatorMixin(BaseMixin):
         return df_macd
 
     def kdj(self, n: int = 9, smooth_type: str = "sma"):
+        """
+        规则
+        n日RSV=（Cn－Ln）/（Hn－Ln）×100
+        公式中，Cn为第n日收盘价；Ln为n日内的最低价；Hn为n日内的最高价。
+        其次，计算K值与D值：
+        * K值 = 2/3×前一日K值 + 1/3×当日RSV
+        * D值 = 2/3×前一日D值 + 1/3×当日K值，若无前一日K值与D值，则可分别用50来代替
+        * J值 = 3*当日K值 - 2*当日D值
+        """
         if smooth_type == "sma":
             func = self._sma
         elif smooth_type == "ema":
@@ -71,7 +86,10 @@ class PriceIndicatorMixin(BaseMixin):
         return df_env
 
     def mi(self, n=12):
-        """Calculate MI indicator."""
+        """Calculate MI indicator.
+        规则
+        MI = CLOSE-REF(CLOSE,1)
+        """
         df_mi = self._df.loc[:, MOVING_COLS]
 
         ser = df_mi["close"] - df_mi["close"].shift(n)
@@ -79,7 +97,7 @@ class PriceIndicatorMixin(BaseMixin):
         return df_mi
 
     def mike(self, n: int = 12):
-        """Calculate MIKE indicator"""
+        """Calculate MIKE Base indicator"""
         df_mike = self._df.loc[:, HIGH_LOW_COLS]
 
         # typ price = avg(high + low + close)
