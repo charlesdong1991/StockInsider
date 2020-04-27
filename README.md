@@ -245,6 +245,16 @@ si.plot_adtm(head=120)
 ![Example 11](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example11.png)
 
 
+- Example12
+
+```python
+si = StockInsider("sh603019")
+si.plot_bbiboll(head=80, n=11, m=9, verbose=True)
+```
+
+![Example 12](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example12.png)
+
+
 ## Donation (打赏)
 It takes time and efforts to make the tool, and if you like it, you could
 also support the author by donation via Wechat Pay :)

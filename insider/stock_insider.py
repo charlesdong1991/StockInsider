@@ -553,3 +553,62 @@ class StockInsider(
 
         fig.update_layout(title_text=f"RC Chart ({self.stock_code})")
         fig.show()
+
+    def plot_boll(self, head: int = 90, n: int = 26, verbose: bool = False):
+        """Plot BOLL line indicator 绘出布林线。
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+            n: The size of moving average period for K, default is 26. 平移平均曲线的窗口大小，默认
+            是26个交易日。
+            verbose: If to include stock price or not, default is False.
+            选择是否将股票价格曲线一起绘出，默认是False，将会只绘出指标曲线。
+        """
+        df_boll = self.boll(n=n)
+
+        layout = self._set_layout()
+        fig = go.Figure(layout=layout)
+
+        for n in ["up", "middle", "down"]:
+            fig.add_trace(self._plot_line(df_boll, head=head, y=n, line_name=n.upper()))
+
+        if verbose:
+            fig.add_trace(self._plot_stock_data(self._df, head))
+
+        fig.update_layout(
+            title_text=f"BOLL Chart ({self.stock_code})",
+            xaxis_rangeslider_visible=False,
+        )
+        fig.show()
+
+    def plot_bbiboll(
+        self, head: int = 90, n: int = 11, m: int = 6, verbose: bool = False
+    ):
+        """Plot BOLL line indicator 绘出布林线。
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+            n: The size of moving average period for K, default is 6. 平移平均曲线的窗口大小，默认
+            是11个交易日。
+            m: The number to decide the width of up/down lines. 上下压力线的带宽倍数。
+            verbose: If to include stock price or not, default is False.
+            选择是否将股票价格曲线一起绘出，默认是False，将会只绘出指标曲线。
+        """
+        df_boll = self.bbiboll(n=n, m=m)
+
+        layout = self._set_layout()
+        fig = go.Figure(layout=layout)
+
+        for n in ["upr", "bbiboll", "dwn"]:
+            fig.add_trace(self._plot_line(df_boll, head=head, y=n, line_name=n.upper()))
+
+        if verbose:
+            fig.add_trace(self._plot_stock_data(self._df, head))
+
+        fig.update_layout(
+            title_text=f"BBIBOLL Chart ({self.stock_code})",
+            xaxis_rangeslider_visible=False,
+        )
+        fig.show()
