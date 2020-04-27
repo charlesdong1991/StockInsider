@@ -109,6 +109,8 @@ Currently, there are many commonly used indicators supported in this tool:
 - ADTM: `si.plot_adtm()`
 - OBV (On Balance Volumn): `si.plot_obv()`
 - RC (Price rate of Change): `si.plot_rc()`
+- BOLL (BOLL line): `si.plot_boll()`
+- BBIBOLL (BBI BOLL line): `si.plot_bbiboll()`
 
 
 And there are several options to tune with:
@@ -243,6 +245,16 @@ si.plot_adtm(head=120)
 ```
 
 ![Example 11](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example11.png)
+
+
+- Example12
+
+```python
+si = StockInsider("sh603019")
+si.plot_bbiboll(head=80, n=11, m=9, verbose=True)
+```
+
+![Example 12](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example12.png)
 
 
 ## Donation (打赏)

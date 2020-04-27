@@ -168,3 +168,42 @@ class PriceIndicatorMixin(BaseMixin):
         df_rc.loc[:, "arc"] = self._sma(use_ser=df_rc["rc"].shift(1), n=n)
 
         return df_rc
+
+    def boll(self, n: int = 26):
+        """Calculate BOLL line indicator. 计算布林线。
+
+        规则
+        中轨线 = N日的移动平均线
+        上轨线 = 中轨线 + 两倍的标准差
+        下轨线 = 中轨线 － 两倍的标准差
+        """
+        df_boll = self._df.loc[:, MOVING_COLS]
+        df_boll.loc[:, "middle"] = self._ma(col="close", n=n)
+        df_boll.loc[:, "up"] = df_boll["middle"] + 2 * self._md(col="close", n=n)
+        df_boll.loc[:, "down"] = df_boll["middle"] - 2 * self._md(col="close", n=n)
+
+        return df_boll
+
+    def bbiboll(self, n: int = 11, m: int = 6):
+        """Calculate BBIBOLL line indicator. 计算多空布林线.
+
+        规则
+        BBIBOLL =（3日简单移动平均价+6日简单移动平均价+12日简单移动平均价+24日简单移动平均价)/4
+        UPR = BBIBOLL + M * BBIBOLL的N日估算标准差
+        DWN = BBIBOLL - M * BBIBOLL的N日估算标准差
+        参数N=11，M=6
+        """
+        df_bbiboll = self._df.loc[:, MOVING_COLS]
+        df_bbiboll.loc[:, "bbiboll"] = (
+            self._ma(col="close", n=3)
+            + self._ma(col="close", n=6)
+            + self._ma(col="close", n=12)
+            + self._ma(col="close", n=24)
+        ) / 4
+        df_bbiboll.loc[:, "upr"] = df_bbiboll["bbiboll"] + m * self._md(
+            col="bbiboll", df=df_bbiboll, n=n
+        )
+        df_bbiboll.loc[:, "dwn"] = df_bbiboll["bbiboll"] - m * self._md(
+            col="bbiboll", df=df_bbiboll, n=n
+        )
+        return df_bbiboll
