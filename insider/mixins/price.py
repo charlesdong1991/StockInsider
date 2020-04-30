@@ -239,3 +239,37 @@ class PriceIndicatorMixin(BaseMixin):
 
         df_atr.loc[:, "atr"] = self._ma(col="tr", df=df_atr, n=n)
         return df_atr
+
+    def cdp(self, n: int = 1):
+        """CDP (Contrarian Operation Indicator) 逆势操作指标。
+
+        规则
+        需求值（CDP）= (前日最高价+前日最低价+前日收盘价)/3
+        最高值（AH）= MA（CDP+（前日最高价-前日最低价），N）
+        近高值（NH）= MA（CDP*2-前日最低价，N）
+        最低值（AL）= MA（CDP-（前日最高价-前日最低价），N）
+        近低值（NL）= MA（CDP*2-前日最高价，N）
+        """
+        df_cdp = self._df.loc[:, HIGH_LOW_COLS]
+
+        df_cdp.loc[:, "cdp"] = (
+            df_cdp.loc[:, ["high", "low", "close"]].shift(1).mean(axis=1)
+        )
+        df_cdp.loc[:, "ah"] = (
+            (df_cdp["cdp"] + df_cdp["high"].shift(1) - df_cdp["low"].shift(1))
+            .rolling(n)
+            .mean()
+        )
+        df_cdp.loc[:, "nh"] = (
+            (df_cdp["cdp"] * 2 - df_cdp["low"].shift(1)).rolling(n).mean()
+        )
+        df_cdp.loc[:, "al"] = (
+            (df_cdp["cdp"] - df_cdp["high"].shift(1) + df_cdp["low"].shift(1))
+            .rolling(n)
+            .mean()
+        )
+        df_cdp.loc[:, "nl"] = (
+            (df_cdp["cdp"] * 2 - df_cdp["high"].shift(1)).rolling(n).mean()
+        )
+
+        return df_cdp
