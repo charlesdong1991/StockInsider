@@ -225,3 +225,17 @@ class PriceIndicatorMixin(BaseMixin):
             col="bbiboll", df=df_bbiboll, n=n
         )
         return df_bbiboll
+
+    def atr(self, n: int = 14):
+        """Average True Ranger Indicator."""
+        df_atr = self._df.loc[:, HIGH_LOW_COLS]
+        df_atr.loc[:, "tr"] = np.vstack(
+            [
+                (df_atr["high"] - df_atr["low"]).abs(),
+                (df_atr["close"].shift(1) - df_atr["high"]).abs(),
+                (df_atr["close"].shift(1) - df_atr["low"]).abs(),
+            ]
+        ).max(axis=0)
+
+        df_atr.loc[:, "atr"] = self._ma(col="tr", df=df_atr, n=n)
+        return df_atr

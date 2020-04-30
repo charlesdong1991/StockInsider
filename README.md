@@ -111,6 +111,7 @@ Currently, there are many commonly used indicators supported in this tool:
 - RC (Price rate of Change): `si.plot_rc()`
 - BOLL (BOLL line): `si.plot_boll()`
 - BBIBOLL (BBI BOLL line): `si.plot_bbiboll()`
+- ATR (Average True Ranger): `si.plot_atr()`
 
 
 And there are several options to tune with:
