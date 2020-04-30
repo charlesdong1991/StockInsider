@@ -40,3 +40,4 @@ MD_N = [5, 10, 20]  # Number of days counted for MD indicator
 EXPMA_N = [5, 10, 20, 60]  # Number of days counted for EMA indicator
 RSI_N = [6, 12, 24]  # Number of days counted for RSI/VRSI indicator
 MIKE_COLS = ["wr", "mr", "sr", "ws", "ms", "ss"]  # Columns defined in MIKE indicator
+CDP_COLS = ["ah", "nh", "cdp", "al", "nl"]  # Columns defined in CDP indicator

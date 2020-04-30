@@ -7,7 +7,7 @@ import numpy as np
 from insider.mixins.price import PriceIndicatorMixin
 from insider.mixins.volume import VolumnIndicatorMixin
 from insider.stock import Stock
-from insider.constants import MA_N, MD_N, EXPMA_N, RSI_N, MIKE_COLS
+from insider.constants import MA_N, MD_N, EXPMA_N, RSI_N, MIKE_COLS, CDP_COLS
 
 
 class StockInsider(
@@ -632,4 +632,58 @@ class StockInsider(
             fig.add_trace(self._plot_line(df_atr, head=head, y=n, line_name=n.upper()))
 
         fig.update_layout(title_text=f"ATR Chart ({self.stock_code})")
+        fig.show()
+
+    def plot_cdp(
+        self,
+        head: int = 90,
+        n: int = 1,
+        ns: Optional[List] = None,
+        verbose: bool = False,
+    ):
+        """Plot Contrarian Operation Indicator. 绘出逆势操作曲线
+
+        压力线解释：
+        CDP: 需求值
+        AH: 最高值
+        NH：近高值
+        AL：最低值
+        NL：近低值
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+            n: The size of moving average period for K, default is 1. 平移平均曲线的窗口大小，默认
+            是1个交易日。
+            ns: Choose the lines to be plotted, default is None, which will plot all five lines.
+            选择压力线来绘出，默认会绘出所有五条条压力线。
+            verbose: If to include stock price or not, default is False.
+            选择是否将股票价格曲线一起绘出，默认是False，将会只绘出指标曲线。
+        """
+        if ns is None:
+            ns = CDP_COLS
+        else:
+            ns = [n.lower() for n in ns]
+            if [n for n in ns if n not in CDP_COLS]:
+                raise ValueError(
+                    "Invalid input for ns, valid values are ah, al, cdp, nh, nl."
+                )
+
+        df_cdp = self.cdp(n=n)
+
+        layout = self._set_layout()
+        fig = go.Figure(layout=layout)
+
+        for ind in ns:
+            fig.add_trace(
+                self._plot_line(df_cdp, head=head, y=ind, line_name=ind.upper())
+            )
+
+        if verbose:
+            fig.add_trace(self._plot_stock_data(self._df, head))
+
+        fig.update_layout(
+            title_text=f"CDP Chart ({self.stock_code})",
+            xaxis_rangeslider_visible=False,
+        )
         fig.show()
