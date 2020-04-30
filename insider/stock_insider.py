@@ -592,7 +592,7 @@ class StockInsider(
             head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
             默认90，将会绘出最近90个交易日的曲线。
             n: The size of moving average period for K, default is 6. 平移平均曲线的窗口大小，默认
-            是11个交易日。
+            是6个交易日。
             m: The number to decide the width of up/down lines. 上下压力线的带宽倍数。
             verbose: If to include stock price or not, default is False.
             选择是否将股票价格曲线一起绘出，默认是False，将会只绘出指标曲线。
@@ -612,4 +612,24 @@ class StockInsider(
             title_text=f"BBIBOLL Chart ({self.stock_code})",
             xaxis_rangeslider_visible=False,
         )
+        fig.show()
+
+    def plot_atr(self, head: int = 90, n: int = 14):
+        """Plot Average True Ranger indicator. 绘出真实变化率曲线
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+            n: The size of moving average period for K, default is 14. 平移平均曲线的窗口大小，默认
+            是14个交易日。
+        """
+        df_atr = self.atr(n=n)
+
+        layout = self._set_layout()
+        fig = go.Figure(layout=layout)
+
+        for n in ["tr", "atr"]:
+            fig.add_trace(self._plot_line(df_atr, head=head, y=n, line_name=n.upper()))
+
+        fig.update_layout(title_text=f"ATR Chart ({self.stock_code})")
         fig.show()
