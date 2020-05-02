@@ -113,6 +113,7 @@ Currently, there are many commonly used indicators supported in this tool:
 - BBIBOLL (BBI BOLL line): `si.plot_bbiboll()`
 - ATR (Average True Ranger): `si.plot_atr()`
 - CDP (Contrarian Operation): `si.plot_cdp()`
+- SAR (Stop And Reverse): `si.plot_sar()`
 
 
 And there are several options to tune with:
@@ -267,6 +268,17 @@ si.plot_cdp(verbose=False)
 ```
 
 ![Example 13](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example13.png)
+
+
+- Example14
+
+```python
+si = StockInsider("sh603019")
+si.plot_sar(head=90, verbose=True)
+```
+
+![Example 14](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example14.png)
+
 
 ## Donation (打赏)
 It takes time and efforts to make the tool, and if you like it, you could
