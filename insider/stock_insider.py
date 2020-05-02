@@ -722,3 +722,21 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
             xaxis_rangeslider_visible=False,
         )
         fig.show()
+
+    def plot_mtm(self, head: int = 90):
+        """Plot MTM indicator. 绘出动量指标
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+        """
+        df_mtm = self.mtm()
+
+        layout = self._set_layout()
+        fig = go.Figure(layout=layout)
+
+        for n in ["mtm", "mtmma"]:
+            fig.add_trace(self._plot_line(df_mtm, head=head, y=n, line_name=n.upper()))
+
+        fig.update_layout(title_text=f"MTM Chart ({self.stock_code})")
+        fig.show()

@@ -114,6 +114,7 @@ Currently, there are many commonly used indicators supported in this tool:
 - ATR (Average True Ranger): `si.plot_atr()`
 - CDP (Contrarian Operation): `si.plot_cdp()`
 - SAR (Stop And Reverse): `si.plot_sar()`
+- MTM (Momentum Index): `si.plot_mtm()`
 
 
 And there are several options to tune with:
