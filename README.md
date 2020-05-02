@@ -17,28 +17,31 @@
 </p>
 
 
+这是一个用来获取中国上市股票价格相关的信息，计算交易指标，并将交易指标绘出的Python工具。指标的计算大多是根据这个博客里
+列出的技术分析指标总结: [技术分析总结 By woojean](http://www.woojean.com/2018/03/09/%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90%E6%8C%87%E6%A0%87%E6%80%BB%E7%BB%93/）
+以及同花顺给出的公式。
 This is a Python tool to collect Chinese stock price information, 
 calculate the trading indicators for analysis and visualize stock
 price and indicator lines.
 
 
-## How to use the tool
+## How to use the tool （如何使用这个工具）
 
-### Installation
+### Installation （安装）
 
-You can choose to either download it from PyPI through:
+You can choose to either download it from PyPI through: （你可以选择从PyPI上下载）
 
 ```bash
 pip install StockInsider
 ```
 
-or to install the latest version:
+or to install the latest version: （也可以安装最新的Github版本）
 ```bash
 pip install -U git+https://github.com/charlesdong1991/StockInsider
 ```
 
 or fork and clone the repo to your local device, and install 
-the dependencies through:
+the dependencies through: （或者克隆这个项目到你本地电脑，然后安装所需包）
 
 ```bash
 git clone git@github.com:charlesdong1991/StockInsider.git
@@ -47,7 +50,19 @@ pip install -r requirements.txt
 ```
 
 
-### Tool Overview
+### Tool Overview （工具简介）
+
+主要工具是`StockInsider`，它需要两个参数：必要参数是`code`，它代表股票在交易
+所的代码，另一个是可选参数`ktype`，它代表股票数据类型。
+
+首先，值得注意的是你需要输入完整的股票代码，我只试过上海和深圳股票交易所的代码，所以
+可以肯定的是这两个交易所上市的公司的股票信息是支持的，比如`sz002156`或者`sh603019`，
+目前的工具只支持股票代码以`sh`或者`sz`开头。
+
+其次，股票数据类型是以何种频率股票价格等信息会汇总，默认是D，表示是日线。也可以选择
+W（周线），M（月线）。
+
+值得注意的是，所有的指标都是以日线为基准的。
 
 The main tool is called `StockInsider`, and it takes in two parameters:
 `code` which is mandatory and an optional `ktype` argument. Once
@@ -67,7 +82,13 @@ from insider import StockInsider
 si = StockInsider("sz002516")
 ```
 
-### Stock Price Visualization
+### Stock Price Visualization （股票价格图）
+
+如果想用这个工具单纯的画出股票K线，只需要输入 `si.plot()`, 就会得到K线走势。
+
+这也有一些选择，比如可以选择`head`来决定只绘出近N日的股票价格而不是所有的，也可以
+选择开始和截止日期内的股票价格；如果想画出向同花顺软件类似的MA曲线，可以选择`verbose=True`来
+做到。
 
 Once initiation, you could use the tool to plot stock price and the
 corresponding indicators over time.
@@ -87,61 +108,69 @@ And there are other options for you:
 can set `verbose` to `False`.
 
 
-### Stock Trading Indicator Visualization
+### Stock Trading Indicator Visualization （股票交易指标图）
+ 
+Currently, there are many commonly used indicators supported in this tool 
+（目前，这个工具支持画出以下的指标）:
 
-Currently, there are many commonly used indicators supported in this tool:
-
-- MA (Moving Average): `si.plot_ma()`
-- MD (Moving Deviation): `si.plot_md()`
-- EMA (Exponential Moving Average): `si.plot_ema()`
-- MACD (Moving Average Convergence/Divergence): `si.plot_macd()`
-- KDJ: `si.plot_kdj`
-- RSI (Relative Strength Index): `si.plot_rsi()`
-- VRSI (Volumn Relative Strength Index): `si.plot_vrsi()`
-- Volumn change: `si.plot_volumn()`
-- VMA (Volumn Moving Average): `si.plot_vma()`
-- VSTD: `si.plot_vstd()`
-- VMACD (Volumn Moving Average Convergence/Divergence): `si.plot_vmacd()`
-- ENV: `si.plot_env()`
-- VOSC (Volumn Oscillator): `si.plot_vosc()`
-- MI (Momentum Indicator): `si.plot_mi()`
-- MIKE: `si.plot_mike()`
-- ADTM: `si.plot_adtm()`
-- OBV (On Balance Volumn): `si.plot_obv()`
-- RC (Price rate of Change): `si.plot_rc()`
-- BOLL (BOLL line): `si.plot_boll()`
-- BBIBOLL (BBI BOLL line): `si.plot_bbiboll()`
-- ATR (Average True Ranger): `si.plot_atr()`
-- CDP (Contrarian Operation): `si.plot_cdp()`
-- SAR (Stop And Reverse): `si.plot_sar()`
-- MTM (Momentum Index): `si.plot_mtm()`
+- MA (Moving Average， 移动平均线): `si.plot_ma()`
+- MD (Moving Deviation， 移动标准差曲线): `si.plot_md()`
+- EMA (Exponential Moving Average， 指数移动平均线): `si.plot_ema()`
+- MACD (Moving Average Convergence/Divergence，指数平滑移动均线): `si.plot_macd()`
+- KDJ （随机指标）: `si.plot_kdj`
+- RSI (Relative Strength Index，相对强弱指标): `si.plot_rsi()`
+- VRSI (Volumn Relative Strength Index，量相对强弱指标): `si.plot_vrsi()`
+- Volumn change（量变指标）: `si.plot_volumn()`
+- VMA (Volumn Moving Average，量移动平均线): `si.plot_vma()`
+- VSTD（成交量标准差）: `si.plot_vstd()`
+- VMACD (Volumn Moving Average Convergence/Divergence，量指数平滑异同平均线): `si.plot_vmacd()`
+- ENV（轨道线）: `si.plot_env()`
+- VOSC (Volumn Oscillator，量震荡指标): `si.plot_vosc()`
+- MI (Momentum Indicator，动力指标): `si.plot_mi()`
+- MIKE（麦克指标）: `si.plot_mike()`
+- ADTM（动态买卖气指标）: `si.plot_adtm()`
+- OBV (On Balance Volumn，能量潮曲线): `si.plot_obv()`
+- RC (Price rate of Change，变化率指标): `si.plot_rc()`
+- BOLL (BOLL line，布林线): `si.plot_boll()`
+- BBIBOLL (BBI BOLL line，多空布林线): `si.plot_bbiboll()`
+- ATR (Average True Ranger，真实波幅): `si.plot_atr()`
+- CDP (Contrarian Operation，逆势操作指标): `si.plot_cdp()`
+- SAR (Stop And Reverse，停损点转向指标): `si.plot_sar()`
+- MTM (Momentum Index，动量指标): `si.plot_mtm()`
 
 
-And there are several options to tune with:
+And there are several options to tune with（一些可以其他的选项）:
 
-- Choose to plot with the stock price by defining `verbose` to `True`
+- Choose to plot with the stock price by defining `verbose` to `True` （是否将股票价格一并绘出）
 - Choose the number of recent trading days of stock information to 
-plot via setting `head`.
+plot via setting `head`. （选择最近N日的股票价格来绘出）
 - Choose which indicators are included in the plot, e.g. only plot `5-day`
-and `60-day` line of MA indicator by setting `ns` to `[5, 60]`.
+and `60-day` line of MA indicator by setting `ns` to `[5, 60]`. （当有多条指标线绘出时，可以选择
+只绘出其中的指定的线而不是全部绘出）
 
-And some other more for specific indicators, please check out the docstrings.
+And some other more for specific indicators, please check out the docstrings （每个指标可能都有
+一些自己独有的参数，可以查看公式注释）.
 
 
-### Get the stock data in Pandas DataFrame
+### Get the original stock data in Pandas DataFrame （以Pandas DataFrame的形式得到原始数据）
+
+如果你想利用原始数据自己做一些有意思的项目，可以选择`si.show_data()`来得到原始股票数据，这些数据将以
+Pandas DataFrame的形式返回。
 
 If you would love to play with the data and do some other more fancy stuff,
 you could also use the tool as a scrapper. Simply use `si.show_data()`
 could return the data in Pandas DataFrame.
 
 
-### Get the calculated indicator data in Pandas DataFrame
+### Get the calculated indicator data in Pandas DataFrame (以Pandas DataFrame的形式得到计算出来的指标数据)
+
+你也可以得到计算好的指标数据，你只需要用指标名称即可，而不需要绘出，比如`si.macd()`。
 
 If you do not like the plot, and want to do other fancy analysis or visualization,
 it is certainly okay! And you just need to call the indicator name, e.g. `si.vosc()`, 
 or `si.macd()`, then it will return the subset with those indicators in it.
 
-## Gallery
+## Gallery （样例）
 
 - Example1
 
