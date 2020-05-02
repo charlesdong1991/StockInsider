@@ -273,3 +273,17 @@ class PriceIndicatorMixin(BaseMixin):
         )
 
         return df_cdp
+
+    def mtm(self, n: int = 6, m: int = 5):
+        """Momentum Index. （动量指标）
+
+        规则
+        MTM（N日）=C－CN
+        C = 当日的收盘价
+        CN = N日前的收盘价
+        """
+        df_mtm = self._df.loc[:, MOVING_COLS]
+
+        df_mtm.loc[:, "mtm"] = df_mtm["close"] - df_mtm["close"].shift(n)
+        df_mtm.loc[:, "mtmma"] = self._ma(col="mtm", df=df_mtm, n=m)
+        return df_mtm
