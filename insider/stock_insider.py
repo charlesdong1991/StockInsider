@@ -6,13 +6,12 @@ import numpy as np
 
 from insider.mixins.price import PriceIndicatorMixin
 from insider.mixins.volume import VolumnIndicatorMixin
+from insider.mixins.sar import SARIndicatorMixin
 from insider.stock import Stock
 from insider.constants import MA_N, MD_N, EXPMA_N, RSI_N, MIKE_COLS, CDP_COLS
 
 
-class StockInsider(
-    Stock, PriceIndicatorMixin, VolumnIndicatorMixin,
-):
+class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicatorMixin):
     """Plot daily trading indicators."""
 
     def __init__(self, code, ktype="D"):
@@ -684,6 +683,42 @@ class StockInsider(
 
         fig.update_layout(
             title_text=f"CDP Chart ({self.stock_code})",
+            xaxis_rangeslider_visible=False,
+        )
+        fig.show()
+
+    def plot_sar(self, head: int = 90, verbose: bool = False):
+        """Plot Stop And Reverse (SAR) indicator. 绘出止损反转指标
+
+        Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+            verbose: If to include stock price or not, default is False.
+            选择是否将股票价格曲线一起绘出，默认是False，将会只绘出指标曲线。
+        """
+        df_sar = self.sar()
+
+        if head:
+            df_sar = df_sar.tail(head)
+
+        layout = self._set_layout()
+        fig = go.Figure(layout=layout)
+
+        fig.add_trace(
+            go.Scatter(
+                x=df_sar["day"],
+                y=df_sar["sar"],
+                marker=dict(color=df_sar["color"], size=3),
+                mode="markers",
+                name="SAR",
+            )
+        )
+
+        if verbose:
+            fig.add_trace(self._plot_stock_data(self._df, head))
+
+        fig.update_layout(
+            title_text=f"SAR Chart ({self.stock_code})",
             xaxis_rangeslider_visible=False,
         )
         fig.show()
