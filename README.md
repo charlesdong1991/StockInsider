@@ -18,8 +18,9 @@
 
 
 这是一个用来获取中国上市股票价格相关的信息，计算交易指标，并将交易指标绘出的Python工具。指标的计算大多是根据这个博客里
-列出的技术分析指标总结: [技术分析总结 By woojean](http://www.woojean.com/2018/03/09/%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90%E6%8C%87%E6%A0%87%E6%80%BB%E7%BB%93/）
+列出的技术分析指标总结: [By woojean](http://www.woojean.com/2018/03/09/%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90%E6%8C%87%E6%A0%87%E6%80%BB%E7%BB%93/）
 以及同花顺给出的公式。
+
 This is a Python tool to collect Chinese stock price information, 
 calculate the trading indicators for analysis and visualize stock
 price and indicator lines.
