@@ -15,6 +15,7 @@ from insider.constants import (
     MA_COLORS,
     MA_COLS,
 )
+from insider.utils import set_layout
 
 
 class Stock:
@@ -40,7 +41,7 @@ class Stock:
             raise ValueError("Stock code needs to be either sz or sh.")
         elif len(code) != 8:
             raise ValueError(f"Invalid code length: requires 8, but get {len(code)}")
-        elif not code[2: ].isdigit():
+        elif not code[2:].isdigit():
             raise ValueError("Code must be all digits after sh or sz.")
         return code
 
@@ -131,11 +132,6 @@ class Stock:
 
         return ma_data
 
-    @staticmethod
-    def _set_layout():
-        layout = go.Layout(xaxis=dict(type="category", tickangle=270))
-        return layout
-
     def plot(
         self,
         head: int = 90,
@@ -161,8 +157,7 @@ class Stock:
             ma_data = self._plot_ma_data(df, head)
             data.extend(ma_data)
 
-        layout = self._set_layout()
-        fig = go.Figure(data=data, layout=layout)
+        fig = go.Figure(data=data, layout=set_layout())
         fig.update_layout(
             xaxis_rangeslider_visible=False,
             title_text=f"Stock Price Chart ({self.stock_code})",
