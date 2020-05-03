@@ -8,6 +8,7 @@ from insider.mixins.price import PriceIndicatorMixin
 from insider.mixins.volume import VolumnIndicatorMixin
 from insider.mixins.sar import SARIndicatorMixin
 from insider.stock import Stock
+from insider.utils import set_layout
 from insider.constants import MA_N, MD_N, EXPMA_N, RSI_N, MIKE_COLS, CDP_COLS
 
 
@@ -50,11 +51,32 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
             verbose_data = verbose_func(df, head)
             plot_data.append(verbose_data)
 
-        layout = self._set_layout()
+        layout = set_layout()
         fig = go.Figure(data=plot_data, layout=layout)
         if verbose:
             fig.update_layout(xaxis_rangeslider_visible=False)
         fig.update_layout(title_text=f"{name.upper()} Chart ({self.stock_code})")
+        fig.show()
+
+    def _plot(self, df, head, title, lines, verbose: bool = False):
+        """General plot functions shared across the class."""
+        fig = go.Figure(layout=set_layout())
+
+        if isinstance(lines, str):
+            lines = [lines]
+        elif not isinstance(lines, list):
+            raise ValueError("Only string or list is valid type for lines.")
+
+        for n in lines:
+            fig.add_trace(self._plot_line(df, head=head, y=n, line_name=n.upper()))
+
+        if verbose:
+            fig.add_trace(self._plot_stock_data(self._df, head))
+
+        fig.update_layout(
+            title_text=f"{title} Chart ({self.stock_code})",
+            xaxis_rangeslider_visible=False,
+        )
         fig.show()
 
     def plot_ma(
@@ -157,7 +179,7 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
             lambda x: "red" if x >= 0 else "green"
         )
 
-        layout = self._set_layout()
+        layout = set_layout()
         fig = go.Figure(layout=layout)
 
         fig.add_trace(
@@ -201,7 +223,7 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
         for col in ["K", "D", "J"]:
             plot_data.append(self._plot_line(df_kdj, head, col, y=col))
 
-        layout = self._set_layout()
+        layout = set_layout()
         fig = go.Figure(data=plot_data, layout=layout)
         fig.update_layout(title_text=f"KDJ Chart ({self.stock_code})")
         fig.show()
@@ -283,7 +305,7 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
         df_volumn = self._df.copy()
         data = self._plot_volumn_data(df_volumn, head)
 
-        layout = self._set_layout()
+        layout = set_layout()
         fig = go.Figure(data=[data], layout=layout)
         fig.update_layout(title_text=f"Volumn Chart ({self.stock_code})")
         fig.show()
@@ -336,7 +358,7 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
             lambda x: "red" if x >= 0 else "green"
         )
 
-        layout = self._set_layout()
+        layout = set_layout()
         fig = go.Figure(layout=layout)
 
         fig.add_trace(
@@ -398,19 +420,9 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
         """
 
         df_env = self.env(n=n)
-
-        layout = self._set_layout()
-        fig = go.Figure(layout=layout)
-
-        fig.add_trace(self._plot_line(df_env, head=head, y="up", line_name="UP"))
-        fig.add_trace(self._plot_line(df_env, head=head, y="down", line_name="DOWN"))
-
-        if verbose:
-            fig.add_trace(self._plot_stock_data(self._df, head))
-        fig.update_layout(
-            title_text=f"ENV Chart ({self.stock_code})", xaxis_rangeslider_visible=False
+        self._plot(
+            df=df_env, head=head, title="ENV", lines=["up", "down"], verbose=verbose
         )
-        fig.show()
 
     def plot_vosc(self, head: int = 90):
         """Plot Volumn Oscillator Indicator 绘出成交量震荡指标
@@ -420,14 +432,7 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
             默认90，将会绘出最近90个交易日的曲线。
         """
         df_vosc = self.vosc()
-
-        layout = self._set_layout()
-        fig = go.Figure(
-            layout=layout,
-            data=self._plot_line(df_vosc, head=head, y="vosc", line_name="VOSC"),
-        )
-        fig.update_layout(title_text=f"VOSC Chart ({self.stock_code})")
-        fig.show()
+        self._plot(df=df_vosc, head=head, title="VOSC", lines=["vosc"])
 
     def plot_mi(self, head: int = 90, n: int = 12):
         """Plot Momentum Indicator. 绘出动量指标
@@ -439,14 +444,7 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
             是12个交易日。
         """
         df_mi = self.mi(n=n)
-
-        layout = self._set_layout()
-        fig = go.Figure(
-            layout=layout,
-            data=self._plot_line(df_mi, head=head, y="mi", line_name="MI"),
-        )
-        fig.update_layout(title_text=f"MI Chart ({self.stock_code})")
-        fig.show()
+        self._plot(df=df_mi, head=head, title="MI", lines=["mi"])
 
     def plot_mike(
         self,
@@ -477,6 +475,8 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
         """
         if ns is None:
             ns = MIKE_COLS
+        elif isinstance(ns, str):
+            ns = [ns]
         else:
             ns = [n.lower() for n in ns]
             if [n for n in ns if n not in MIKE_COLS]:
@@ -485,21 +485,7 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
                 )
 
         df_mike = self.mike(n=n)
-
-        layout = self._set_layout()
-        fig = go.Figure(layout=layout)
-
-        for n in ns:
-            fig.add_trace(self._plot_line(df_mike, head=head, y=n, line_name=n.upper()))
-
-        if verbose:
-            fig.add_trace(self._plot_stock_data(self._df, head))
-
-        fig.update_layout(
-            title_text=f"MIKE Chart ({self.stock_code})",
-            xaxis_rangeslider_visible=False,
-        )
-        fig.show()
+        self._plot(df=df_mike, head=head, title="MIKE", lines=ns, verbose=verbose)
 
     def plot_adtm(self, head: int = 90):
         """Plot ADTM(23,8) indicator. 绘出动态买卖气指标 (ADTM(23, 8))
@@ -509,16 +495,7 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
             默认90，将会绘出最近90个交易日的曲线。
         """
         df_adtm = self.adtm()
-
-        layout = self._set_layout()
-        fig = go.Figure(layout=layout)
-        fig.add_trace(self._plot_line(df_adtm, head=head, y="adtm", line_name="ADTM"))
-        fig.add_trace(
-            self._plot_line(df_adtm, head=head, y="adtmma", line_name="ADTMMA")
-        )
-
-        fig.update_layout(title_text=f"ADTM Chart ({self.stock_code})")
-        fig.show()
+        self._plot(df=df_adtm, head=head, title="ADTM", lines=["adtm", "adtmma"])
 
     def plot_obv(self, head: int = 90):
         """Plot OBV (On Balance Volumn) Indicator。绘出能量指标
@@ -528,13 +505,7 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
             默认90，将会绘出最近90个交易日的曲线。
         """
         df_obv = self.obv()
-
-        layout = self._set_layout()
-        fig = go.Figure(layout=layout)
-        fig.add_trace(self._plot_line(df_obv, head=head, y="obv", line_name="OBV"))
-
-        fig.update_layout(title_text=f"OBV Chart ({self.stock_code})")
-        fig.show()
+        self._plot(df=df_obv, head=head, title="OBV", lines=["obv"])
 
     def plot_rc(self, head: int = 90, n: int = 30):
         """Plot RC (Price rate of Change) Indicator 绘出价格变化率指标
@@ -546,13 +517,7 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
             是30个交易日。
         """
         df_rc = self.rc(n=n)
-
-        layout = self._set_layout()
-        fig = go.Figure(layout=layout)
-        fig.add_trace(self._plot_line(df_rc, head=head, y="arc", line_name="ARC"))
-
-        fig.update_layout(title_text=f"RC Chart ({self.stock_code})")
-        fig.show()
+        self._plot(df=df_rc, head=head, title="RC", lines=["arc"])
 
     def plot_boll(self, head: int = 90, n: int = 26, verbose: bool = False):
         """Plot BOLL line indicator 绘出布林线。
@@ -566,21 +531,13 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
             选择是否将股票价格曲线一起绘出，默认是False，将会只绘出指标曲线。
         """
         df_boll = self.boll(n=n)
-
-        layout = self._set_layout()
-        fig = go.Figure(layout=layout)
-
-        for n in ["up", "middle", "down"]:
-            fig.add_trace(self._plot_line(df_boll, head=head, y=n, line_name=n.upper()))
-
-        if verbose:
-            fig.add_trace(self._plot_stock_data(self._df, head))
-
-        fig.update_layout(
-            title_text=f"BOLL Chart ({self.stock_code})",
-            xaxis_rangeslider_visible=False,
+        self._plot(
+            df=df_boll,
+            head=head,
+            title="BOLL",
+            lines=["up", "middle", "down"],
+            verbose=verbose,
         )
-        fig.show()
 
     def plot_bbiboll(
         self, head: int = 90, n: int = 11, m: int = 6, verbose: bool = False
@@ -597,21 +554,13 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
             选择是否将股票价格曲线一起绘出，默认是False，将会只绘出指标曲线。
         """
         df_boll = self.bbiboll(n=n, m=m)
-
-        layout = self._set_layout()
-        fig = go.Figure(layout=layout)
-
-        for n in ["upr", "bbiboll", "dwn"]:
-            fig.add_trace(self._plot_line(df_boll, head=head, y=n, line_name=n.upper()))
-
-        if verbose:
-            fig.add_trace(self._plot_stock_data(self._df, head))
-
-        fig.update_layout(
-            title_text=f"BBIBOLL Chart ({self.stock_code})",
-            xaxis_rangeslider_visible=False,
+        self._plot(
+            df=df_boll,
+            head=head,
+            title="BBIBOLL",
+            lines=["upr", "bbiboll", "dwn"],
+            verbose=verbose,
         )
-        fig.show()
 
     def plot_atr(self, head: int = 90, n: int = 14):
         """Plot Average True Ranger indicator. 绘出真实变化率曲线
@@ -623,15 +572,7 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
             是14个交易日。
         """
         df_atr = self.atr(n=n)
-
-        layout = self._set_layout()
-        fig = go.Figure(layout=layout)
-
-        for n in ["tr", "atr"]:
-            fig.add_trace(self._plot_line(df_atr, head=head, y=n, line_name=n.upper()))
-
-        fig.update_layout(title_text=f"ATR Chart ({self.stock_code})")
-        fig.show()
+        self._plot(df=df_atr, head=head, title="ATR", lines=["tr", "atr"])
 
     def plot_cdp(
         self,
@@ -661,6 +602,8 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
         """
         if ns is None:
             ns = CDP_COLS
+        elif isinstance(ns, str):
+            ns = [ns]
         else:
             ns = [n.lower() for n in ns]
             if [n for n in ns if n not in CDP_COLS]:
@@ -669,23 +612,7 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
                 )
 
         df_cdp = self.cdp(n=n)
-
-        layout = self._set_layout()
-        fig = go.Figure(layout=layout)
-
-        for ind in ns:
-            fig.add_trace(
-                self._plot_line(df_cdp, head=head, y=ind, line_name=ind.upper())
-            )
-
-        if verbose:
-            fig.add_trace(self._plot_stock_data(self._df, head))
-
-        fig.update_layout(
-            title_text=f"CDP Chart ({self.stock_code})",
-            xaxis_rangeslider_visible=False,
-        )
-        fig.show()
+        self._plot(df=df_cdp, head=head, title="CDP", lines=ns, verbose=verbose)
 
     def plot_sar(self, head: int = 90, verbose: bool = False):
         """Plot Stop And Reverse (SAR) indicator. 绘出止损反转指标
@@ -701,9 +628,7 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
         if head:
             df_sar = df_sar.tail(head)
 
-        layout = self._set_layout()
-        fig = go.Figure(layout=layout)
-
+        fig = go.Figure(layout=set_layout())
         fig.add_trace(
             go.Scatter(
                 x=df_sar["day"],
@@ -731,12 +656,4 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
             默认90，将会绘出最近90个交易日的曲线。
         """
         df_mtm = self.mtm()
-
-        layout = self._set_layout()
-        fig = go.Figure(layout=layout)
-
-        for n in ["mtm", "mtmma"]:
-            fig.add_trace(self._plot_line(df_mtm, head=head, y=n, line_name=n.upper()))
-
-        fig.update_layout(title_text=f"MTM Chart ({self.stock_code})")
-        fig.show()
+        self._plot(df=df_mtm, head=head, title="MTM", lines=["mtm", "mtmma"])
