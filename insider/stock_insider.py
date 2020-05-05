@@ -4,23 +4,59 @@ import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 
-from insider.mixins.price import PriceIndicatorMixin
-from insider.mixins.volume import VolumnIndicatorMixin
-from insider.mixins.sar import SARIndicatorMixin
+from insider.indicators.price import PriceIndicatorMixin
+from insider.indicators.volume import VolumnIndicatorMixin
+from insider.indicators.sar import SARIndicatorMixin
 from insider.stock import Stock
 from insider.utils import set_layout
-from insider.constants import MA_N, MD_N, EXPMA_N, RSI_N, MIKE_COLS, CDP_COLS
+from insider.constants import (
+    MA_N,
+    MD_N,
+    EXPMA_N,
+    RSI_N,
+    MIKE_COLS,
+    CDP_COLS,
+    EXTERNAL_COLS,
+)
 
 
 class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicatorMixin):
     """Plot daily trading indicators."""
 
-    def __init__(self, code, ktype="D"):
+    def __init__(self, code, ktype="D", df=None):
         """
-        code: Full stock code，(e.g. 'sz002156')，股票完整代码
-        ktype: Data frequency, valid input is `D`, `W`, or `M`. 股票数据的频率
+        Parameters:
+            code: Full stock code，(e.g. 'sz002156')，股票完整代码
+            ktype: Data frequency, valid input is `D`, `W`, or `M`. 股票数据的频率
         """
-        super().__init__(code, ktype)
+        if df is not None and isinstance(df, pd.DataFrame):
+            self._df = df
+            self.stock_code = code
+        else:
+            super().__init__(code, ktype)
+
+    @classmethod
+    def from_external_csv_data(cls, fpath: str, code=None):
+        """Allow the StockInsider class serve for external stock data (other than
+        default Chinese stock data) to visualize stock trading indicators.
+        如果你有已经下载好的或者是非中国股市股票的数据想要来计算和绘出交易指标，你可以选择
+        用这个classmethod来初始化。
+
+        Parameters:
+            fpath: the path to the external stock data in CSV. 外部数据的路径
+            code: the stock code you would like to show in each visualization, the default
+                is None which will have `external data` shown as stock name.
+                股票代码，这个没有必要是真实的代码，你选择的结果将会被以股票代码的形式展示。
+        """
+        df = pd.read_csv(fpath)
+        if not set(EXTERNAL_COLS).issubset(df.columns):
+            raise ValueError(
+                f"{EXTERNAL_COLS} are mandatory in external data so as to plot"
+                f" all trading indicators."
+            )
+        if code is None:
+            code = "external data"
+        return cls(code=code, df=df)
 
     @staticmethod
     def _plot_line(df: pd.DataFrame, head: int, line_name: str, y: str = "close"):

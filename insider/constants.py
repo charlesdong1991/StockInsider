@@ -45,3 +45,6 @@ CDP_COLS = ["ah", "nh", "cdp", "al", "nl"]  # Columns defined in CDP indicator
 # Constants used in SARIndicator Mixin
 INITIAL_TREND = True
 INITIAL_AF = 0.02
+
+# Columns that are at least included in external data
+EXTERNAL_COLS = ["day", "high", "low", "open", "close", "volumn"]
