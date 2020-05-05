@@ -287,3 +287,31 @@ class PriceIndicatorMixin(BaseMixin):
         df_mtm.loc[:, "mtm"] = df_mtm["close"] - df_mtm["close"].shift(n)
         df_mtm.loc[:, "mtmma"] = self._ma(col="mtm", df=df_mtm, n=m)
         return df_mtm
+
+    def dmi(self, n: int = 14):
+        """DMI (Directional Movement Index) 动向指标"""
+        df_dmi = self._df.loc[:, HIGH_LOW_COLS]
+
+        df_dmi.loc[:, "up"] = df_dmi["high"] - df_dmi["high"].shift(1)
+        df_dmi.loc[:, "down"] = df_dmi["low"].shift(1) - df_dmi["low"]
+
+        df_dmi = df_dmi.assign(
+            pdi=lambda x: np.where((x["up"] > x["down"]) & (x["up"] > 0), x["up"], 0)
+        ).assign(
+            mdi=lambda x: np.where(
+                (x["down"] > x["up"]) & (x["down"] > 0), x["down"], 0
+            )
+        )
+        df_dmi.loc[:, "atr"] = self.atr(n=n)["atr"]
+
+        df_dmi.loc[:, "pdi"] = 100 * self._ma(col="pdi", df=df_dmi, n=n) / df_dmi["atr"]
+        df_dmi.loc[:, "mdi"] = 100 * self._ma(col="mdi", df=df_dmi, n=n) / df_dmi["atr"]
+
+        df_dmi.loc[:, "adx"] = (
+            100
+            * (df_dmi["pdi"] - df_dmi["mdi"]).abs().rolling(n).mean()
+            / (df_dmi["pdi"] + df_dmi["mdi"])
+        )
+        df_dmi.loc[:, "adxr"] = (df_dmi["adx"] + df_dmi["adx"].shift(n)) / 2
+
+        return df_dmi
