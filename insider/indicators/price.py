@@ -1,6 +1,6 @@
 import numpy as np
 
-from insider.mixins.base import BaseMixin
+from insider.indicators.base import BaseMixin
 from insider.constants import MOVING_COLS, HIGH_LOW_COLS, ADTM_COLS
 
 

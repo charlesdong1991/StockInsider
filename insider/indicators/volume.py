@@ -1,6 +1,6 @@
 import numpy as np
 
-from insider.mixins.base import BaseMixin
+from insider.indicators.base import BaseMixin
 from insider.constants import MOVING_VOLUMN_COLS, VOLUMN_VOLS
 
 

@@ -21,9 +21,10 @@
 列出的技术分析指标总结: [By woojean](http://www.woojean.com/2018/03/09/%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90%E6%8C%87%E6%A0%87%E6%80%BB%E7%BB%93/）
 以及同花顺给出的公式。
 
-This is a Python tool to collect Chinese stock price information, 
-calculate the trading indicators for analysis and visualize stock
-price and indicator lines.
+This is a Python tool to calculate the trading indicators for analysis and visualize stock
+price and indicator lines. This tool provides a simple API for the collection stock information 
+from Chinese stock market, but you could also use it to get the stock data from your saved
+stock information in CSV format. 
 
 
 ## How to use the tool （如何使用这个工具）
@@ -82,6 +83,20 @@ which refers to daily stock price, and other allowed values are `W`
 from insider import StockInsider
 si = StockInsider("sz002516")
 ```
+
+### Calculate and Plot Trading Indicators on your Saved Stock Data (利用你已有的股票数据来计算和绘出曲线)
+如果你想利用这个工具来计算和绘出其他的（非中国）股票数据，可以利用以下来初始化工具.
+
+Other than calculating and plotting trading indicators for Chinese stock data (default), you could 
+also use this tool to do the same for any of your saved stock data in CSV. You could initialize
+your StockInsider by `from_external_csv_data`, and then use the initialized tool to do the rest.
+
+```python
+from insider import StockInsider
+fpath = "path/to/your/stock/data/in/CSV"
+si = StockInsider.from_external_csv_data(fapth=fpath, code="my stock")
+```
+
 
 ### Stock Price Visualization （股票价格图）
 

@@ -1,6 +1,6 @@
 import pandas as pd
 
-from insider.mixins.base import BaseMixin
+from insider.indicators.base import BaseMixin
 from insider.constants import HIGH_LOW_COLS, INITIAL_AF, INITIAL_TREND
 
 
