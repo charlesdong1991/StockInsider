@@ -5,14 +5,14 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
 
-__keywords__ = ["chinese stock", "visualization", "insight", "stock analysis", "python"]
+__keywords__ = ["stock", "visualization", "insight", "stock analysis", "python", "finance"]
 
 setup(
     name="StockInsider",
     description="The Python implementation of an stock analysis and visualization tool.",
     long_description_content_type='text/markdown',
     long_description=long_description,
-    version="0.1.0",
+    version="0.2.0",
     author="Kaiqi Dong",
     url="https://github.com/charlesdong1991/StockInsider",
     author_email="kaiqidong1991@gmail.com",
