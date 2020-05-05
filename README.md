@@ -138,6 +138,7 @@ Currently, there are many commonly used indicators supported in this tool
 - CDP (Contrarian Operation，逆势操作指标): `si.plot_cdp()`
 - SAR (Stop And Reverse，停损点转向指标): `si.plot_sar()`
 - MTM (Momentum Index，动量指标): `si.plot_mtm()`
+- DMI (Directional Movement Index, 动向指标): `si.plot_dmi()`
 
 
 And there are several options to tune with（一些可以其他的选项）:
@@ -309,6 +310,15 @@ si.plot_sar(head=90, verbose=True)
 ```
 
 ![Example 14](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example14.png)
+
+- Example15
+
+```python
+si = StockInsider("sh603019")
+si.plot_dmi()
+```
+
+![Example 15](https://github.com/charlesdong1991/StockInsider/blob/master/examples/example15.png)
 
 
 ## Donation (打赏)

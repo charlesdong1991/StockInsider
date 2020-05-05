@@ -657,3 +657,18 @@ class StockInsider(Stock, PriceIndicatorMixin, VolumnIndicatorMixin, SARIndicato
         """
         df_mtm = self.mtm()
         self._plot(df=df_mtm, head=head, title="MTM", lines=["mtm", "mtmma"])
+
+    def plot_dmi(self, head: int = 90, n: int = 14):
+        """Plot DMI (Directional Movement Index) indicator. 绘出动向指标
+
+            Parameters:
+            head: The recent number of trading days to plot, default is 90, 最近交易日的天数，
+            默认90，将会绘出最近90个交易日的曲线。
+            n: The size of moving average period for K, default is 14. 平移平均曲线的窗口大小，默认
+            是14个交易日。
+        """
+        df_dmi = self.dmi(n=n)
+
+        self._plot(
+            df=df_dmi, head=head, title="DMI", lines=["pdi", "mdi", "adx", "adxr"]
+        )
